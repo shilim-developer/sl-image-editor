@@ -7,7 +7,9 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    NButton: typeof import('naive-ui')['NButton']
+    copy: typeof import('./../src/components/widgets/w-image/WImage copy.vue')['default']
+    HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
+    Moveable: typeof import('./../src/components/tools/moveable/Moveable.vue')['default']
     NH2: typeof import('naive-ui')['NH2']
     NIcon: typeof import('naive-ui')['NIcon']
     NLayout: typeof import('naive-ui')['NLayout']
@@ -15,10 +17,11 @@ declare module 'vue' {
     NLayoutHeader: typeof import('naive-ui')['NLayoutHeader']
     NLayoutSider: typeof import('naive-ui')['NLayoutSider']
     NTab: typeof import('naive-ui')['NTab']
-    NTabPane: typeof import('naive-ui')['NTabPane']
     NTabs: typeof import('naive-ui')['NTabs']
-    NText: typeof import('naive-ui')['NText']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    WidgetRenderer: typeof import('./../src/components/layouts/widget-renderer/WidgetRenderer.vue')['default']
+    WImage: typeof import('./../src/components/widgets/w-image/WImage.vue')['default']
+    WPage: typeof import('./../src/components/widgets/w-page/WPage.vue')['default']
   }
 }
