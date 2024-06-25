@@ -92,7 +92,10 @@
         <n-h2>海淀桥</n-h2>
         <n-h2>海淀桥</n-h2>
       </n-layout-sider>
-      <n-layout content-style="padding: 24px;" :native-scrollbar="false">
+      <n-layout-content
+        content-style="padding: 24px;"
+        :native-scrollbar="false"
+      >
         <!-- <canvas
           ref="fontCanvas"
           :style="{
@@ -100,8 +103,10 @@
             height: '100px',
           }"
         ></canvas> -->
-        <widget-renderer v-bind="data" />
-      </n-layout>
+        <div class="position-relative w-100% h-100%">
+          <widget-renderer :page="page" :widget-list="designStore.widgetList" />
+        </div>
+      </n-layout-content>
     </n-layout>
     <n-layout-footer position="absolute" style="height: 24px" bordered>
       城府路
@@ -110,8 +115,12 @@
   </n-layout>
 </template>
 <script lang="ts" setup>
-import { WidgetType } from "@/components/widgets/types/common";
+import {
+  CommonWidgetType,
+  WidgetType,
+} from "@/components/widgets/types/common";
 import { WPageType } from "@/components/widgets/w-page/w-page-type";
+import { useDesignStore } from "@/stores/modules/design";
 import {
   GridOutline,
   SparklesOutline,
@@ -120,21 +129,51 @@ import {
 } from "@vicons/ionicons5";
 import { fabric } from "fabric";
 const fontCanvas = ref(null);
+import { v4 as uuidV4 } from "uuid";
 
-const data: WPageType = {
+const designStore = useDesignStore();
+
+const page: WPageType = {
   type: WidgetType.WPage,
-  uuid: "",
-  width: 600,
-  height: 800,
-  children: [
-    {
-      type: WidgetType.WImage,
-      uuid: "",
-      width: 200,
-      height: 100,
-    },
-  ],
+  uuid: "-1",
+  parent: "",
+  shape: {
+    width: 600,
+    height: 800,
+    x: 0,
+    y: 0,
+    rotate: 0,
+  },
 };
+
+const data: CommonWidgetType[] = [
+  {
+    type: WidgetType.WImage,
+    uuid: "img1",
+    parent: "-1",
+    shape: {
+      width: 100,
+      height: 100,
+      x: 0,
+      y: 0,
+      rotate: 0,
+    },
+  },
+  {
+    type: WidgetType.WImage,
+    uuid: "img2",
+    parent: "-1",
+    shape: {
+      width: 100,
+      height: 100,
+      x: 100,
+      y: 100,
+      rotate: 0,
+    },
+  },
+];
+designStore.setState({ widgetList: data });
+designStore.initWidgetIndexMap();
 
 onMounted(() => {
   // const screenCanvas = new fabric.Canvas(fontCanvas.value);

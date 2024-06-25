@@ -1,9 +1,23 @@
 <template>
-  <Moveable className="moveable" ref="moveableRef" v-bind="moveableOptions" />
+  <Moveable
+    className="moveable"
+    ref="moveableRef"
+    v-bind="moveableOptions"
+    @drag="onDrag"
+    @dragEnd="onDragEnd"
+    @rotate="onRotate"
+    @rotateEnd="onRotateEnd"
+    @resize="onResize"
+    @resizeEnd="onResizeEnd"
+  />
+  <VueSelecto v-bind="selectoOption" @select="onSelect" />
 </template>
 <script lang="ts" setup>
 import Moveable, { getElementInfo } from "vue3-moveable";
 import { cloneDeep } from "lodash";
+import { useDesignStore } from "@/stores/modules/design";
+import { parseMat } from "css-to-mat";
+import VueSelecto from "vue3-selecto";
 
 const defaultConfig = {
   zoom: 0.8,
@@ -67,5 +81,119 @@ const defaultConfig = {
 };
 const moveableOptions: any = reactive(cloneDeep(defaultConfig));
 const moveableRef = ref<InstanceType<typeof Moveable>>();
+
+const selectoOption = reactive<Partial<VueSelecto>>({
+  selectableTargets: [".widget"],
+  selectByClick: false,
+  // 是否从内部目标中选择(default: true)
+  selectFromInside: false,
+  // 选择后，是否与所选目标一起选择下一个目标
+  continueSelect: false,
+  // Determines which key to continue selecting the next target via keydown and keyup.
+  toggleContinueSelect: "shift",
+  // 目标与要选择的拖动区域重叠的速率。(默认:100)
+  hitRate: 5,
+  getElementRect: getElementInfo,
+});
+
+const onSelect = (e: any) => {
+  e.added.forEach((el: any) => {
+    console.log(el);
+    designStore.setState((state) => {
+      state.selectedWidgets.push(el.id);
+    });
+    console.log(designStore.widgetIndexMap);
+  });
+  e.removed.forEach((el: any) => {
+    designStore.setState((state) => {
+      console.log(state.widgetIndexMap[el.id]);
+      const index = state.selectedWidgets.findIndex((item) => item === el.id);
+      state.selectedWidgets.splice(index, 1);
+    });
+  });
+};
+
+const onDrag = (e: any) => {
+  const { inputEvent, target, left, top } = e;
+  console.log("inputEvent:", e);
+  inputEvent.stopPropagation();
+  inputEvent.preventDefault();
+  // target!.style.left = `${left}px`;
+  // target!.style.top = `${top}px`;
+  const matrix = parseMat(e.transform);
+  // const matrix = Array.from(new DOMMatrix(e.transform).toFloat32Array());
+
+  // console.log("matrix:", matrix);
+  target.style.transform = `matrix3d(${matrix.join(", ")})`;
+  // target!.style.transform = e.transform;
+};
+const onDragEnd = async ({ inputEvent, lastEvent }: any) => {
+  inputEvent.stopPropagation();
+  inputEvent.preventDefault();
+  console.log("lastEvent:", lastEvent);
+  designStore.setState((state) => {
+    state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x =
+      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x +
+      lastEvent.left;
+    state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y =
+      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y +
+      lastEvent.top;
+  });
+};
+const onRotate = (e: any) => {
+  const { inputEvent, target, left, top } = e;
+  target!.style.transform = e.transform;
+};
+const onRotateEnd = async ({ inputEvent, lastEvent }: any) => {
+  inputEvent.stopPropagation();
+  inputEvent.preventDefault();
+  console.log("lastEvent:", lastEvent);
+  designStore.setState((state) => {
+    state.widgetList[
+      state.widgetIndexMap[state.selectedWidgets[0]]
+    ].shape.rotate =
+      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape
+        .rotate + lastEvent.rotate;
+  });
+};
+const onResize = (e: any) => {
+  const { inputEvent, target, width, height } = e;
+  console.log(e);
+  target!.style.transform = e.transform;
+  target!.style.width = `${width}px`;
+  target!.style.height = `${height}px`;
+};
+const onResizeEnd = ({ inputEvent, lastEvent }: any) => {
+  console.log("lastEvent:", lastEvent);
+  designStore.setState((state) => {
+    state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x =
+      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x +
+      lastEvent.left;
+    state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y =
+      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y +
+      lastEvent.top;
+    state.widgetList[
+      state.widgetIndexMap[state.selectedWidgets[0]]
+    ].shape.width = lastEvent.width;
+    state.widgetList[
+      state.widgetIndexMap[state.selectedWidgets[0]]
+    ].shape.height = lastEvent.height;
+  });
+};
+
+const designStore = useDesignStore();
+watch(
+  () => designStore.selectedWidgets,
+  (value, oldValue) => {
+    console.log("value:", value);
+    if (value.length > 0) {
+      moveableOptions.target =
+        value.length === 1
+          ? document.getElementById(value[0])
+          : value.map((item) => document.getElementById(item));
+    }
+  },
+  { deep: true }
+);
 </script>
 <style lang="scss" scoped></style>

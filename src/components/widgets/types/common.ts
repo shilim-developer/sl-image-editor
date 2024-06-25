@@ -3,10 +3,18 @@ export enum WidgetType {
   "WImage" = "WImage",
 }
 
+export interface WidgetPosition {
+  x: number;
+  y: number;
+  rotate: number;
+}
+
 export interface CommonWidgetType {
   type: WidgetType;
   uuid: string;
-  width: number;
-  height: number;
-  children?: CommonWidgetType[];
+  parent: string;
+  shape: {
+    width: number;
+    height: number;
+  } & WidgetPosition;
 }
