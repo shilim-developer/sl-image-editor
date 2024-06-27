@@ -13,11 +13,12 @@
   <VueSelecto v-bind="selectoOption" @select="onSelect" />
 </template>
 <script lang="ts" setup>
-import Moveable, { getElementInfo } from "vue3-moveable";
+import Moveable, { OnDrag, OnDragEnd, getElementInfo } from "vue3-moveable";
 import { cloneDeep } from "lodash";
-import { useDesignStore } from "@/stores/modules/design";
-import { parseMat } from "css-to-mat";
 import VueSelecto from "vue3-selecto";
+import { getMatrix3dTransform } from "@/utils/utils";
+import { useWidgetMoveable } from "@/components/widgets/use-widget-moveable";
+import { useCanvasStore } from "@/stores/modules/design/canvas";
 
 const defaultConfig = {
   zoom: 0.8,
@@ -81,6 +82,7 @@ const defaultConfig = {
 };
 const moveableOptions: any = reactive(cloneDeep(defaultConfig));
 const moveableRef = ref<InstanceType<typeof Moveable>>();
+const widgetMoveable = useWidgetMoveable();
 
 const selectoOption = reactive<Partial<VueSelecto>>({
   selectableTargets: [".widget"],
@@ -113,84 +115,81 @@ const onSelect = (e: any) => {
   });
 };
 
-const onDrag = (e: any) => {
-  const { inputEvent, target, left, top } = e;
-  console.log("inputEvent:", e);
+const onDrag = ({ inputEvent, target, transform }: OnDrag) => {
   inputEvent.stopPropagation();
   inputEvent.preventDefault();
-  // target!.style.left = `${left}px`;
-  // target!.style.top = `${top}px`;
-  const matrix = parseMat(e.transform);
-  // const matrix = Array.from(new DOMMatrix(e.transform).toFloat32Array());
-
-  // console.log("matrix:", matrix);
-  target.style.transform = `matrix3d(${matrix.join(", ")})`;
-  // target!.style.transform = e.transform;
+  target.style.transform = getMatrix3dTransform(transform);
 };
-const onDragEnd = async ({ inputEvent, lastEvent }: any) => {
+const onDragEnd = async ({ inputEvent, lastEvent }: OnDragEnd) => {
   inputEvent.stopPropagation();
   inputEvent.preventDefault();
-  console.log("lastEvent:", lastEvent);
   designStore.setState((state) => {
-    state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x =
-      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x +
-      lastEvent.left;
-    state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y =
-      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y +
-      lastEvent.top;
+    const widgetIndex = designStore.selectedWidgetIndex[0];
+    state.widgetList[widgetIndex].bounds.x =
+      state.widgetList[widgetIndex].bounds.x + lastEvent.left;
+    state.widgetList[widgetIndex].bounds.y =
+      state.widgetList[widgetIndex].bounds.y + lastEvent.top;
   });
 };
 const onRotate = (e: any) => {
-  const { inputEvent, target, left, top } = e;
-  target!.style.transform = e.transform;
+  // const { inputEvent, target, left, top } = e;
+  // target!.style.transform = e.transform;
 };
 const onRotateEnd = async ({ inputEvent, lastEvent }: any) => {
-  inputEvent.stopPropagation();
-  inputEvent.preventDefault();
-  console.log("lastEvent:", lastEvent);
-  designStore.setState((state) => {
-    state.widgetList[
-      state.widgetIndexMap[state.selectedWidgets[0]]
-    ].shape.rotate =
-      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape
-        .rotate + lastEvent.rotate;
-  });
+  // inputEvent.stopPropagation();
+  // inputEvent.preventDefault();
+  // console.log("lastEvent:", lastEvent);
+  // designStore.setState((state) => {
+  //   state.widgetList[
+  //     state.widgetIndexMap[state.selectedWidgets[0]]
+  //   ].shape.rotate =
+  //     state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape
+  //       .rotate + lastEvent.rotate;
+  // });
 };
 const onResize = (e: any) => {
   const { inputEvent, target, width, height } = e;
-  console.log(e);
-  target!.style.transform = e.transform;
-  target!.style.width = `${width}px`;
-  target!.style.height = `${height}px`;
+  // console.log(e);
+  // target!.style.transform = e.transform;
+  // target!.style.width = `${width}px`;
+  // target!.style.height = `${height}px`;
 };
 const onResizeEnd = ({ inputEvent, lastEvent }: any) => {
   console.log("lastEvent:", lastEvent);
-  designStore.setState((state) => {
-    state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x =
-      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x +
-      lastEvent.left;
-    state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y =
-      state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y +
-      lastEvent.top;
-    state.widgetList[
-      state.widgetIndexMap[state.selectedWidgets[0]]
-    ].shape.width = lastEvent.width;
-    state.widgetList[
-      state.widgetIndexMap[state.selectedWidgets[0]]
-    ].shape.height = lastEvent.height;
-  });
+  // designStore.setState((state) => {
+  //   state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x =
+  //     state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x +
+  //     lastEvent.left;
+  //   state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y =
+  //     state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y +
+  //     lastEvent.top;
+  //   state.widgetList[
+  //     state.widgetIndexMap[state.selectedWidgets[0]]
+  //   ].shape.width = lastEvent.width;
+  //   state.widgetList[
+  //     state.widgetIndexMap[state.selectedWidgets[0]]
+  //   ].shape.height = lastEvent.height;
+  // });
 };
 
-const designStore = useDesignStore();
+const designStore = useCanvasStore();
 watch(
   () => designStore.selectedWidgets,
   (value, oldValue) => {
-    console.log("value:", value);
     if (value.length > 0) {
+      const selectedWidgets = value.map(
+        (item) => designStore.widgetList[designStore.widgetIndexMap[item]]
+      );
+      console.log(widgetMoveable[selectedWidgets[0].type]);
+
+      moveableOptions.renderDirections =
+        widgetMoveable[selectedWidgets[0].type].options.renderDirections;
+
       moveableOptions.target =
         value.length === 1
           ? document.getElementById(value[0])
           : value.map((item) => document.getElementById(item));
+      console.log(widgetMoveable, selectedWidgets[0].type);
     }
   },
   { deep: true }

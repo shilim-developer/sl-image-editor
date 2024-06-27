@@ -13,7 +13,7 @@ export interface CommonWidgetType {
   type: WidgetType;
   uuid: string;
   parent: string;
-  shape: {
+  bounds: {
     width: number;
     height: number;
   } & WidgetPosition;

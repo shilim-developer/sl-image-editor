@@ -2,22 +2,12 @@
   <div
     class="position-absolute left-0 top-0"
     :style="{
-      width: `${widgetInfo.shape.width}px`,
-      height: `${widgetInfo.shape.height}px`,
+      width: `${widgetInfo.bounds.width}px`,
+      height: `${widgetInfo.bounds.height}px`,
       background: '#f6f8fa',
-      transform: getMatrix3dTransform(widgetInfo.shape),
+      transform: getMatrix3dTransform(widgetInfo.bounds),
     }"
-  >
-    <component
-      class="widget"
-      v-for="item in widgetList"
-      :key="item.uuid"
-      :is="item.type"
-      :id="item.uuid"
-      :widget-info="item"
-    ></component>
-    <slot></slot>
-  </div>
+  ></div>
 </template>
 <script lang="ts" setup>
 import { CommonWidgetType } from "../types/common";

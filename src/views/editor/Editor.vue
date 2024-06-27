@@ -3,7 +3,7 @@
     <n-layout-header style="height: 64px; padding: 24px" bordered>
       SL-IMAGE-EDITOR
     </n-layout-header>
-    <n-layout position="absolute" style="top: 64px; bottom: 24px" has-sider>
+    <n-layout position="absolute" style="top: 64px; bottom: 30px" has-sider>
       <n-tabs
         type="bar"
         animated
@@ -93,23 +93,32 @@
         <n-h2>海淀桥</n-h2>
       </n-layout-sider>
       <n-layout-content
-        content-style="padding: 24px;"
+        ref="contentRef"
         :native-scrollbar="false"
+        :scrollbar-props="{ xScrollable: true }"
+        v-element-size="onContentResize"
       >
-        <!-- <canvas
-          ref="fontCanvas"
-          :style="{
-            width: '200px',
-            height: '100px',
+        <widget-renderer
+          :container-size="containerSize"
+          :page-margin="{
+            top: 40,
+            right: 40,
+            bottom: 40,
+            left: 40,
           }"
-        ></canvas> -->
-        <div class="position-relative w-100% h-100%">
-          <widget-renderer :page="page" :widget-list="designStore.widgetList" />
-        </div>
+        />
       </n-layout-content>
+      <canvas-list
+        :width="containerSize.width - 20 - 20"
+        :left="containerLeft + 20"
+      ></canvas-list>
     </n-layout>
-    <n-layout-footer position="absolute" style="height: 24px" bordered>
-      城府路
+    <n-layout-footer
+      position="absolute"
+      bordered
+      class="h-30px flex justify-center items-center"
+    >
+      shilim@copyright
     </n-layout-footer>
     <Moveable />
   </n-layout>
@@ -120,7 +129,8 @@ import {
   WidgetType,
 } from "@/components/widgets/types/common";
 import { WPageType } from "@/components/widgets/w-page/w-page-type";
-import { useDesignStore } from "@/stores/modules/design";
+import { useCanvasListStore } from "@/stores/modules/design/canvas-list";
+import { useCanvasStore } from "@/stores/modules/design/canvas";
 import {
   GridOutline,
   SparklesOutline,
@@ -130,30 +140,19 @@ import {
 import { fabric } from "fabric";
 const fontCanvas = ref(null);
 import { v4 as uuidV4 } from "uuid";
+import { vElementSize } from "@vueuse/components";
 
-const designStore = useDesignStore();
+const canvasListStore = useCanvasListStore();
+const canvasStore = useCanvasStore();
 
-const page: WPageType = {
-  type: WidgetType.WPage,
-  uuid: "-1",
-  parent: "",
-  shape: {
-    width: 600,
-    height: 800,
-    x: 0,
-    y: 0,
-    rotate: 0,
-  },
-};
-
-const data: CommonWidgetType[] = [
+const data: [WPageType, ...CommonWidgetType[]] = [
   {
-    type: WidgetType.WImage,
-    uuid: "img1",
-    parent: "-1",
-    shape: {
-      width: 100,
-      height: 100,
+    type: WidgetType.WPage,
+    uuid: "-1",
+    parent: "",
+    bounds: {
+      width: 600,
+      height: 800,
       x: 0,
       y: 0,
       rotate: 0,
@@ -161,21 +160,49 @@ const data: CommonWidgetType[] = [
   },
   {
     type: WidgetType.WImage,
+    uuid: "img1",
+    parent: "-1",
+    bounds: {
+      width: 100,
+      height: 100,
+      x: 0,
+      y: 0,
+      rotate: 10,
+    },
+  },
+  {
+    type: WidgetType.WImage,
     uuid: "img2",
     parent: "-1",
-    shape: {
+    bounds: {
       width: 100,
       height: 100,
       x: 100,
       y: 100,
-      rotate: 0,
+      rotate: 20,
     },
   },
 ];
-designStore.setState({ widgetList: data });
-designStore.initWidgetIndexMap();
+canvasStore.setWidgetList(data);
+// canvasListStore.initWidgetIndexMap();
+canvasListStore.addCanvas();
+const contentRef = ref();
+const containerSize = reactive({
+  width: 0,
+  height: 0,
+});
+const containerLeft = ref(0);
+const onContentResize = () => {
+  console.log(contentRef.value.$el.offset);
+  containerSize.width = contentRef.value.$el.clientWidth;
+  containerSize.height = contentRef.value.$el.clientHeight;
+  containerLeft.value = contentRef.value.$el.offsetLeft;
+};
 
 onMounted(() => {
+  onContentResize();
+  // console.log(contentRef.value.$el.offsetWidth);
+  // console.log(contentRef.value.$el.offsetHeight);
   // const screenCanvas = new fabric.Canvas(fontCanvas.value);
   // screenCanvas.setDimensions({
   //   width: 200,
