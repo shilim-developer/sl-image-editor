@@ -1,5 +1,7 @@
 export default {
   options: {
-    renderDirections: ["nw", "n", "ne", "w", "e", "sw", "s", "se"],
+    isMultipleSelectable: false,
+    renderDirections: ["n", "w", "e", "s"],
+    rotatable: false,
   },
 };

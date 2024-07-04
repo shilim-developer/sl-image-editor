@@ -19,6 +19,8 @@ import VueSelecto from "vue3-selecto";
 import { getMatrix3dTransform } from "@/utils/utils";
 import { useWidgetMoveable } from "@/components/widgets/use-widget-moveable";
 import { useCanvasStore } from "@/stores/modules/design/canvas";
+import { storeToRefs } from "pinia";
+import { WidgetType, pageUUid } from "@/components/widgets/types/common";
 
 const defaultConfig = {
   zoom: 0.8,
@@ -85,7 +87,11 @@ const moveableRef = ref<InstanceType<typeof Moveable>>();
 const widgetMoveable = useWidgetMoveable();
 
 const selectoOption = reactive<Partial<VueSelecto>>({
-  selectableTargets: [".widget"],
+  selectableTargets: Object.keys(widgetMoveable)
+    .map((key) =>
+      widgetMoveable[key].options.isMultipleSelectable ? `.${key}` : ""
+    )
+    .filter((item) => item),
   selectByClick: false,
   // 是否从内部目标中选择(default: true)
   selectFromInside: false,
@@ -100,96 +106,129 @@ const selectoOption = reactive<Partial<VueSelecto>>({
 
 const onSelect = (e: any) => {
   e.added.forEach((el: any) => {
-    console.log(el);
-    designStore.setState((state) => {
-      state.selectedWidgets.push(el.id);
-    });
-    console.log(designStore.widgetIndexMap);
+    if (selectedWidgets.value[0] === pageUUid) {
+      selectedWidgets.value.splice(0, 1, el.id);
+      // canvasStore.setCanvasData({
+      //   selectedWidgets: selectedWidgets.value,
+      // });
+    } else {
+      canvasStore.setCanvasData({
+        selectedWidgets: selectedWidgets.value.concat([el.id]),
+      });
+    }
   });
   e.removed.forEach((el: any) => {
-    designStore.setState((state) => {
-      console.log(state.widgetIndexMap[el.id]);
-      const index = state.selectedWidgets.findIndex((item) => item === el.id);
-      state.selectedWidgets.splice(index, 1);
+    const index = selectedWidgets.value.findIndex((item) => item === el.id);
+    selectedWidgets.value.splice(index, 1);
+    canvasStore.setCanvasData({
+      selectedWidgets: selectedWidgets.value,
     });
   });
 };
 
+/**
+ * 处理元素的拖拽事件
+ * @param {OnDrag} obj - 包含事件对象、目标元素和转换信息的对象
+ */
 const onDrag = ({ inputEvent, target, transform }: OnDrag) => {
   inputEvent.stopPropagation();
   inputEvent.preventDefault();
   target.style.transform = getMatrix3dTransform(transform);
 };
-const onDragEnd = async ({ inputEvent, lastEvent }: OnDragEnd) => {
+
+const onDragEnd = async ({ target, inputEvent, lastEvent }: OnDragEnd) => {
+  if (!lastEvent) return;
+  console.log("target:", target);
   inputEvent.stopPropagation();
   inputEvent.preventDefault();
-  designStore.setState((state) => {
-    const widgetIndex = designStore.selectedWidgetIndex[0];
-    state.widgetList[widgetIndex].bounds.x =
-      state.widgetList[widgetIndex].bounds.x + lastEvent.left;
-    state.widgetList[widgetIndex].bounds.y =
-      state.widgetList[widgetIndex].bounds.y + lastEvent.top;
-  });
+  console.log("lastEvent:", lastEvent);
+  const widgetIndex = canvasStore.selectedWidgetIndex[0];
+  const bounds = widgetList.value[widgetIndex].bounds;
+  canvasStore.setWidgetData([
+    {
+      uuid: selectedWidgets.value[0],
+      bounds: {
+        x: bounds.x + lastEvent.left,
+        y: bounds.y + lastEvent.top,
+      },
+    },
+  ]);
 };
 const onRotate = (e: any) => {
-  // const { inputEvent, target, left, top } = e;
-  // target!.style.transform = e.transform;
+  const { inputEvent, target, left, top } = e;
+  target!.style.transform = e.transform;
 };
 const onRotateEnd = async ({ inputEvent, lastEvent }: any) => {
-  // inputEvent.stopPropagation();
-  // inputEvent.preventDefault();
-  // console.log("lastEvent:", lastEvent);
-  // designStore.setState((state) => {
-  //   state.widgetList[
-  //     state.widgetIndexMap[state.selectedWidgets[0]]
-  //   ].shape.rotate =
-  //     state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape
-  //       .rotate + lastEvent.rotate;
-  // });
+  inputEvent.stopPropagation();
+  inputEvent.preventDefault();
+  console.log("lastEvent:", lastEvent);
+  const widgetIndex = canvasStore.selectedWidgetIndex[0];
+  const bounds = widgetList.value[widgetIndex].bounds;
+  canvasStore.setWidgetData([
+    {
+      uuid: selectedWidgets.value[0],
+      bounds: {
+        rotate: bounds.rotate + lastEvent.rotate,
+      },
+    },
+  ]);
 };
 const onResize = (e: any) => {
   const { inputEvent, target, width, height } = e;
   // console.log(e);
-  // target!.style.transform = e.transform;
-  // target!.style.width = `${width}px`;
-  // target!.style.height = `${height}px`;
+  target!.style.transform = e.transform;
+  target!.style.width = `${width}px`;
+  target!.style.height = `${height}px`;
 };
 const onResizeEnd = ({ inputEvent, lastEvent }: any) => {
   console.log("lastEvent:", lastEvent);
-  // designStore.setState((state) => {
-  //   state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x =
-  //     state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.x +
-  //     lastEvent.left;
-  //   state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y =
-  //     state.widgetList[state.widgetIndexMap[state.selectedWidgets[0]]].shape.y +
-  //     lastEvent.top;
-  //   state.widgetList[
-  //     state.widgetIndexMap[state.selectedWidgets[0]]
-  //   ].shape.width = lastEvent.width;
-  //   state.widgetList[
-  //     state.widgetIndexMap[state.selectedWidgets[0]]
-  //   ].shape.height = lastEvent.height;
-  // });
+  const widgetIndex = canvasStore.selectedWidgetIndex[0];
+  const bounds = widgetList.value[widgetIndex].bounds;
+  canvasStore.setWidgetData([
+    {
+      uuid: selectedWidgets.value[0],
+      bounds: {
+        width: lastEvent.width,
+        height: lastEvent.height,
+        x: bounds.x + lastEvent.left,
+        y: bounds.y + lastEvent.top,
+      },
+    },
+  ]);
 };
 
-const designStore = useCanvasStore();
+const canvasStore = useCanvasStore();
+const { canvasData } = storeToRefs(canvasStore);
+const { selectedWidgets, widgetList, widgetIndexMap } = toRefs(
+  canvasData.value
+);
 watch(
-  () => designStore.selectedWidgets,
-  (value, oldValue) => {
+  () => selectedWidgets.value,
+  (value) => {
     if (value.length > 0) {
       const selectedWidgets = value.map(
-        (item) => designStore.widgetList[designStore.widgetIndexMap[item]]
+        (item) => widgetList.value[widgetIndexMap.value[item]]
       );
-      console.log(widgetMoveable[selectedWidgets[0].type]);
-
-      moveableOptions.renderDirections =
-        widgetMoveable[selectedWidgets[0].type].options.renderDirections;
-
+      const widgetMoveableOptions =
+        widgetMoveable[selectedWidgets[0].type].options;
+      moveableOptions.renderDirections = widgetMoveableOptions.renderDirections;
       moveableOptions.target =
         value.length === 1
           ? document.getElementById(value[0])
           : value.map((item) => document.getElementById(item));
-      console.log(widgetMoveable, selectedWidgets[0].type);
+      moveableOptions.rotatable = widgetMoveableOptions.rotatable;
+      if (selectedWidgets[0].type === WidgetType.WPage) {
+        moveableOptions.draggable = false;
+      } else {
+        moveableOptions.draggable = true;
+        if (canvasStore.activeMouseEvent) {
+          const tempActiveMouseEvent = canvasStore.activeMouseEvent;
+          console.log("tempActiveMouseEvent:", tempActiveMouseEvent);
+          nextTick(() => {
+            moveableRef.value?.dragStart(tempActiveMouseEvent);
+          });
+        }
+      }
     }
   },
   { deep: true }

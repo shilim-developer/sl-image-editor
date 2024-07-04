@@ -3,11 +3,15 @@ import { useCanvasListStore } from "./canvas-list";
 import { CommonWidgetType } from "@/components/widgets/types/common";
 import { deepAssign } from "@/utils/utils";
 import { WPageType } from "@/components/widgets/w-page/w-page-type";
+import { CanvasState, PowerPartial } from "./design-type";
+import { CanvasData } from "@/components/tools/canvas-list/canvas-type";
 
 export const useCanvasStore = defineStore("canvasStore", {
-  state: () => ({}),
+  state: (): CanvasState => ({
+    activeMouseEvent: null,
+  }),
   getters: {
-    canvasData() {
+    canvasData(): CanvasData {
       const canvasListStore = useCanvasListStore();
       return canvasListStore.currentCanvas;
     },
@@ -15,13 +19,30 @@ export const useCanvasStore = defineStore("canvasStore", {
       const canvasListStore = useCanvasListStore();
       return canvasListStore.currentCanvas.widgetList[0];
     },
-    // currentWidget()
+    selectedWidgetIndex() {
+      const canvasListStore = useCanvasListStore();
+      return canvasListStore.currentCanvas.selectedWidgets.map(
+        (item) => canvasListStore.currentCanvas.widgetIndexMap[item]
+      );
+    },
   },
   actions: {
+    setState(partial: Partial<CanvasState> | ((state: CanvasState) => void)) {
+      if (typeof partial === "function") {
+        this.$patch(partial);
+      } else {
+        // @ts-ignore
+        this.$patch(partial);
+      }
+    },
     setWidgetList(data: [WPageType, ...CommonWidgetType[]]) {
       this.canvasData.widgetList = reactive(data);
     },
-    setWidgetData(data: CommonWidgetType[]) {
+    setCanvasData(data: PowerPartial<CanvasData>) {
+      const canvasListStore = useCanvasListStore();
+      deepAssign(canvasListStore.currentCanvas, data);
+    },
+    setWidgetData(data: (PowerPartial<CommonWidgetType> & { uuid: string })[]) {
       const canvasListStore = useCanvasListStore();
       data.forEach((item) => {
         deepAssign(

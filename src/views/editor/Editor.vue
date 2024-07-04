@@ -103,7 +103,7 @@
           :page-margin="{
             top: 40,
             right: 40,
-            bottom: 40,
+            bottom: 40 + canvasListHeight,
             left: 40,
           }"
         />
@@ -111,6 +111,7 @@
       <canvas-list
         :width="containerSize.width - 20 - 20"
         :left="containerLeft + 20"
+        v-element-size="onCanvasListResize"
       ></canvas-list>
     </n-layout>
     <n-layout-footer
@@ -184,45 +185,28 @@ const data: [WPageType, ...CommonWidgetType[]] = [
   },
 ];
 canvasStore.setWidgetList(data);
-// canvasListStore.initWidgetIndexMap();
-canvasListStore.addCanvas();
+canvasStore.initWidgetIndexMap();
+// canvasListStore.addCanvas();
 const contentRef = ref();
 const containerSize = reactive({
   width: 0,
   height: 0,
 });
 const containerLeft = ref(0);
-const onContentResize = () => {
+function onContentResize() {
   console.log(contentRef.value.$el.offset);
   containerSize.width = contentRef.value.$el.clientWidth;
   containerSize.height = contentRef.value.$el.clientHeight;
   containerLeft.value = contentRef.value.$el.offsetLeft;
-};
+}
+
+const canvasListHeight = ref(0);
+function onCanvasListResize({ height }: { height: number }) {
+  canvasListHeight.value = height;
+}
 
 onMounted(() => {
   onContentResize();
-  // console.log(contentRef.value.$el.offsetWidth);
-  // console.log(contentRef.value.$el.offsetHeight);
-  // const screenCanvas = new fabric.Canvas(fontCanvas.value);
-  // screenCanvas.setDimensions({
-  //   width: 200,
-  //   height: 100,
-  // });
-  // var rect = new fabric.Textbox("props.params.text", {
-  //   left: 0,
-  //   top: 0,
-  //   width: 200,
-  //   height: 16,
-  //   fill: "red",
-  //   fontSize: 14,
-  //   lineHeight: 1.6,
-  // });
-  // screenCanvas.on("after:render", () => {
-  //   if (rect.height! > screenCanvas.getHeight()) {
-  //     screenCanvas.setHeight(rect.height!);
-  //   }
-  // });
-  // screenCanvas.add(rect);
 });
 </script>
 <style lang="less" scoped>

@@ -13,18 +13,20 @@
         transform: `translate(${pageBound.pageLeft}px, ${pageBound.pageTop}px) scale(${pageBound.pageScale}) `,
         boxSizing: 'border-box',
       }"
-      @click="handleClick"
+      @mousedown="handleMouseDown"
+      @mouseup="handleMouseUp"
     >
       <component
-        class="widget"
         v-for="item in canvasListStore.currentCanvas.widgetList"
+        class="widget cursor-default"
+        :class="[item.type]"
         :key="item.uuid"
         :is="item.type"
         :id="item.uuid"
         :widget-info="item"
       ></component>
     </div>
-    <div class="position-fixed right-40px bottom-40px">
+    <div class="position-fixed right-40px bottom-40px z-10">
       <n-button-group>
         <n-button @click="handleScale(1)">
           <template #icon>
@@ -48,6 +50,7 @@ import { useCanvasListStore } from "@/stores/modules/design/canvas-list";
 import { useCanvasStore } from "@/stores/modules/design/canvas";
 import { getScaleInfo } from "@/utils/utils";
 import { Add, Remove } from "@vicons/ionicons5";
+import { WidgetType, pageUUid } from "@/components/widgets/types/common";
 type PropsType = {
   containerSize: { width: number; height: number };
   pageMargin: {
@@ -86,7 +89,7 @@ const pageBound = ref({
   pageScale: 1,
 });
 
-const countSize = (scale: number) => {
+function countSize(scale: number) {
   // 去掉间距后的可视容器宽高
   const realWidth =
     props.containerSize.width - props.pageMargin.left - props.pageMargin.right;
@@ -106,37 +109,58 @@ const countSize = (scale: number) => {
       : realPageHeight + props.pageMargin.top + props.pageMargin.bottom;
   pageBound.value.pageLeft =
     props.pageMargin.left +
-    (realWidth > realPageWidth ? (realWidth - realPageWidth) / 2 : 0);
+    (realWidth > realPageWidth
+      ? (realWidth - realPageWidth) / 2 +
+        (props.pageMargin.left - props.pageMargin.right)
+      : 0);
   pageBound.value.pageTop =
     props.pageMargin.top +
-    (realHeight > realPageHeight ? (realHeight - realPageHeight) / 2 : 0);
+    (realHeight > realPageHeight
+      ? (realHeight - realPageHeight) / 2 +
+        (props.pageMargin.top - props.pageMargin.bottom)
+      : 0);
   pageBound.value.pageScale = scale;
-};
+}
 
 const canvasListStore = useCanvasListStore();
 const canvasStore = useCanvasStore();
-const handleClick = (event: MouseEvent) => {
+function handleMouseDown(event: MouseEvent) {
   const x = event.clientX;
   const y = event.clientY;
   const elements = document.elementsFromPoint(x, y);
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
     if (element.id && element.className.includes("widget")) {
-      // canvasStore.setState({
-      //   selectedWidgets: [element.id],
-      // });
-      // console.log("element:", canvasStore.selectedWidgets);
+      if (element.id !== pageUUid) {
+        canvasStore.setState({
+          activeMouseEvent: event,
+        });
+      }
+      canvasStore.setCanvasData({
+        selectedWidgets: [element.id],
+      });
       break;
     }
   }
-};
+}
+function handleMouseUp() {
+  canvasStore.setState({
+    activeMouseEvent: null,
+  });
+}
 
 onMounted(() => {
   watch(
-    () => props.containerSize,
+    () => props,
     () => {
-      const realWidth = props.containerSize.width - 80;
-      const realHeight = props.containerSize.height - 80;
+      const realWidth =
+        props.containerSize.width -
+        props.pageMargin.left -
+        props.pageMargin.right;
+      const realHeight =
+        props.containerSize.height -
+        props.pageMargin.top -
+        props.pageMargin.bottom;
       suitScale.value = getScaleInfo(
         {
           width: realWidth,

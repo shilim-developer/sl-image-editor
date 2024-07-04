@@ -9,6 +9,8 @@ export interface WidgetPosition {
   rotate: number;
 }
 
+export const pageUUid = "-1";
+
 export interface CommonWidgetType {
   type: WidgetType;
   uuid: string;
