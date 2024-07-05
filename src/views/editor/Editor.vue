@@ -108,6 +108,25 @@
           }"
         />
       </n-layout-content>
+      <div
+        class="w-270px h-full b-t-0 b-r-0 b-b-0 b-l-1px b-solid border-gray-200 flex flex-col overflow-hidden"
+        :collapsed-width="0"
+        :native-scrollbar="false"
+        bordered
+        show-trigger="arrow-circle"
+      >
+        <n-tabs type="line" justify-content="space-evenly">
+          <n-tab name="edit"> 编辑 </n-tab>
+          <n-tab name="layer"> 图层 </n-tab>
+        </n-tabs>
+        <n-scrollbar class="flex-1">
+          <component
+            v-for="item in canvasStore.widgetSettingList"
+            :key="item"
+            :is="item"
+          ></component>
+        </n-scrollbar>
+      </div>
       <canvas-list
         :width="containerSize.width - 20 - 20"
         :left="containerLeft + 20"
@@ -157,6 +176,9 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       x: 0,
       y: 0,
       rotate: 0,
+    },
+    background: {
+      type: "color",
     },
   },
   {

@@ -21,6 +21,7 @@
     "uuid": "^10.0.0",
     "vue": "^3.4.19",
     "vue-router": "^4.3.0",
+    "vue3-color-picker-gradient": "^0.7.0",
     "vue3-moveable": "^0.28.0",
     "vue3-selecto": "^1.12.3"
   },

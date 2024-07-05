@@ -119,10 +119,15 @@ const onSelect = (e: any) => {
   });
   e.removed.forEach((el: any) => {
     const index = selectedWidgets.value.findIndex((item) => item === el.id);
-    selectedWidgets.value.splice(index, 1);
-    canvasStore.setCanvasData({
-      selectedWidgets: selectedWidgets.value,
-    });
+    if (selectedWidgets.value.length === 1) {
+      selectedWidgets.value.splice(index, 1, pageUUid);
+    } else {
+      selectedWidgets.value.splice(index, 1);
+    }
+
+    // canvasStore.setCanvasData({
+    //   selectedWidgets: selectedWidgets.value,
+    // });
   });
 };
 

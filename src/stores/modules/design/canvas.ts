@@ -25,6 +25,26 @@ export const useCanvasStore = defineStore("canvasStore", {
         (item) => canvasListStore.currentCanvas.widgetIndexMap[item]
       );
     },
+    selectedWidgetList() {
+      const canvasListStore = useCanvasListStore();
+      const currentCanvas = canvasListStore.currentCanvas;
+      return currentCanvas.selectedWidgets.map(
+        (item) => currentCanvas.widgetList[currentCanvas.widgetIndexMap[item]]
+      );
+    },
+    widgetSettingList() {
+      const canvasListStore = useCanvasListStore();
+      const currentCanvas = canvasListStore.currentCanvas;
+      if (currentCanvas.selectedWidgets.length === 1) {
+        return [
+          currentCanvas.widgetList[
+            currentCanvas.widgetIndexMap[currentCanvas.selectedWidgets[0]]
+          ].type + "-setting",
+        ];
+      } else {
+        return [];
+      }
+    },
   },
   actions: {
     setState(partial: Partial<CanvasState> | ((state: CanvasState) => void)) {
