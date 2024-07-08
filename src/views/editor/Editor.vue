@@ -161,6 +161,7 @@ import { fabric } from "fabric";
 const fontCanvas = ref(null);
 import { v4 as uuidV4 } from "uuid";
 import { vElementSize } from "@vueuse/components";
+import { getImageListApi } from "@/api/api";
 
 const canvasListStore = useCanvasListStore();
 const canvasStore = useCanvasStore();
@@ -229,6 +230,7 @@ function onCanvasListResize({ height }: { height: number }) {
 
 onMounted(() => {
   onContentResize();
+  getImageListApi();
 });
 </script>
 <style lang="less" scoped>

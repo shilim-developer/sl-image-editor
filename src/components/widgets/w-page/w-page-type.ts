@@ -4,10 +4,8 @@ export interface WPageType extends CommonWidgetType {
   type: WidgetType.WPage;
   background: {
     type: "color" | "image";
-    colorType?: "linear" | "gradient";
-    linear?: any;
-    gradient?: any;
-    gradientDeg?: number;
-    image?: string;
+    colorType?: "solid" | "gradient";
+    backgroundColor?: string;
+    backgroundImage?: string;
   };
 }

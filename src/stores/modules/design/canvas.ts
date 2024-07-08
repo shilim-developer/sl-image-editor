@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import { useCanvasListStore } from "./canvas-list";
-import { CommonWidgetType } from "@/components/widgets/types/common";
+import {
+  CommonWidgetType,
+  WidgetTypeMap,
+} from "@/components/widgets/types/common";
 import { deepAssign } from "@/utils/utils";
 import { WPageType } from "@/components/widgets/w-page/w-page-type";
 import { CanvasState, PowerPartial } from "./design-type";
@@ -62,7 +65,9 @@ export const useCanvasStore = defineStore("canvasStore", {
       const canvasListStore = useCanvasListStore();
       deepAssign(canvasListStore.currentCanvas, data);
     },
-    setWidgetData(data: (PowerPartial<CommonWidgetType> & { uuid: string })[]) {
+    setWidgetData<T extends keyof WidgetTypeMap>(
+      data: (PowerPartial<WidgetTypeMap[T]> & { uuid: string })[]
+    ) {
       const canvasListStore = useCanvasListStore();
       data.forEach((item) => {
         deepAssign(

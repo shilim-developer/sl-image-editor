@@ -4,7 +4,7 @@
     :style="{
       width: `${widgetInfo.bounds.width}px`,
       height: `${widgetInfo.bounds.height}px`,
-      background: '#f6f8fa',
+      background: widgetInfo.background.backgroundColor,
       transform: getMatrix3dTransform(widgetInfo.bounds),
     }"
   ></div>

@@ -1,3 +1,6 @@
+import { WImageType } from "../w-image/w-image-type";
+import { WPageType } from "../w-page/w-page-type";
+
 export enum WidgetType {
   "WPage" = "WPage",
   "WImage" = "WImage",
@@ -20,3 +23,8 @@ export interface CommonWidgetType {
     height: number;
   } & WidgetPosition;
 }
+
+export type WidgetTypeMap = {
+  [WidgetType.WPage]: WPageType;
+  [WidgetType.WImage]: WImageType;
+};

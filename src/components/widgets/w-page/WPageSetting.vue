@@ -52,13 +52,30 @@
           <n-tab-pane name="color" tab="颜色">
             <n-popover trigger="click">
               <template #trigger>
-                <div class="w-100% h-100px"></div>
+                <div
+                  class="w-100% h-100px box-border border-1px border-solid border-gray-2 border-rd-1 cursor-pointer"
+                  :style="{
+                    background: widgetSetting.background.backgroundColor,
+                  }"
+                ></div>
               </template>
-              <ColorPicker
-                :value="true"
-                type="gradient"
-                :pDeg="90"
-                :closeOnClickBody="false"
+              <Vue3ColorPicker
+                :model-value="widgetSetting.background.backgroundColor"
+                @update:model-value="colorChange"
+                :mode="mode"
+                :showInputMenu="false"
+                :showColorList="false"
+                :showEyeDrop="false"
+                :local="{
+                  angle: '角度',
+                  solid: '纯色',
+                  positionX: '位置X',
+                  positionY: '位置Y',
+                  gradient: '渐变',
+                  linear: '线性',
+                  radial: '径向',
+                  colorPalate: '色板',
+                }"
               />
             </n-popover>
           </n-tab-pane>
@@ -68,9 +85,6 @@
         </n-tabs>
       </div>
     </n-collapse-item>
-    <n-collapse-item title="黄金" :name="3">
-      <div>真棒</div>
-    </n-collapse-item>
   </n-collapse>
 </template>
 <script lang="ts" setup>
@@ -78,11 +92,30 @@ import { useCanvasStore } from "@/stores/modules/design/canvas";
 import { ChevronDown, ChevronUp } from "@vicons/ionicons5";
 import { cloneDeep } from "lodash";
 import { WPageType } from "./w-page-type";
-import ColorPicker from "vue3-color-picker-gradient";
+import { Vue3ColorPicker } from "@cyhnkckali/vue3-color-picker";
+import "@cyhnkckali/vue3-color-picker/dist/style.css";
+import { getColorModeFromStr } from "@/utils/utils";
+import { WidgetType } from "../types/common";
 
 const canvasStore = useCanvasStore();
 const widgetSetting = ref<WPageType>(
   cloneDeep(canvasStore.selectedWidgetList[0] as WPageType)
 );
+const mode = computed(() =>
+  getColorModeFromStr(widgetSetting.value.background.backgroundColor || "")
+);
+
+function colorChange(value: string) {
+  widgetSetting.value.background.backgroundColor = value;
+  canvasStore.setWidgetData<WidgetType.WPage>([
+    {
+      uuid: widgetSetting.value.uuid,
+      background: {
+        backgroundColor: value,
+        colorType: mode.value,
+      },
+    },
+  ]);
+}
 </script>
 <style lang="scss" scoped></style>

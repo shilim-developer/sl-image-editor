@@ -3,6 +3,7 @@ import type { PluginOption } from "vite";
 import vue from "@vitejs/plugin-vue";
 import setupAutoImport from "./auto-import";
 import setupVueComponents from "./vue-components";
+import setupMockServer from "./mock";
 // import mkcert from "vite-plugin-mkcert";
 // import setupRequire from "./require";
 // import { testPlugin } from "./test";
@@ -29,7 +30,7 @@ export default function setupVitePlugins() {
   // vitePlugins.push(setupIcons());
 
   // vite-plugin-mock
-  // VITE_USE_MOCK && vitePlugins.push(setupMockServer(isBuild));
+  vitePlugins.push(setupMockServer());
 
   return vitePlugins;
 }

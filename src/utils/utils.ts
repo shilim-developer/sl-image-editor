@@ -58,3 +58,14 @@ export const deepAssign = (target: any, sources: any) => {
     }
   }
 };
+
+export const getColorModeFromStr = (val: string): "gradient" | "solid" => {
+  if (
+    val &&
+    (val.includes("radial-gradient") || val.includes("linear-gradient"))
+  ) {
+    return "gradient";
+  } else {
+    return "solid";
+  }
+};
