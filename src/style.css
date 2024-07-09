@@ -13,3 +13,7 @@ body,
 .ck-cp-container {
   box-shadow: none !important;
 }
+
+.n-scrollbar-rail--vertical {
+  right: -8px !important;
+}

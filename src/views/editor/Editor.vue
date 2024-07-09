@@ -73,12 +73,18 @@
         </div>
       </n-layout-sider> -->
       <n-layout-sider
-        content-style="padding: 24px;"
+        content-style="height:100%; padding: 16px;overflow:hidden"
         :collapsed-width="0"
         :native-scrollbar="false"
+        :width="300"
         bordered
         show-trigger="arrow-circle"
       >
+        <WaterFall
+          class="w-full h-full overflow-visible"
+          style="height: 100%"
+        />
+        <!-- <n-h2>海淀桥</n-h2>
         <n-h2>海淀桥</n-h2>
         <n-h2>海淀桥</n-h2>
         <n-h2>海淀桥</n-h2>
@@ -89,8 +95,7 @@
         <n-h2>海淀桥</n-h2>
         <n-h2>海淀桥</n-h2>
         <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
+        <n-h2>海淀桥</n-h2> -->
       </n-layout-sider>
       <n-layout-content
         ref="contentRef"
