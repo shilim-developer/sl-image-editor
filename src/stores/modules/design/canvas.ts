@@ -12,6 +12,7 @@ import { CanvasData } from "@/components/tools/canvas-list/canvas-type";
 export const useCanvasStore = defineStore("canvasStore", {
   state: (): CanvasState => ({
     activeMouseEvent: null,
+    widgetRendererRef: null,
   }),
   getters: {
     canvasData(): CanvasData {

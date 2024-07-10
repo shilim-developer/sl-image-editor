@@ -1,5 +1,6 @@
 export interface CanvasState {
   activeMouseEvent: MouseEvent | null;
+  widgetRendererRef: HTMLDivElement | null;
 }
 
 /**

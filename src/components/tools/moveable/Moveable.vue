@@ -10,7 +10,7 @@
     @resize="onResize"
     @resizeEnd="onResizeEnd"
   />
-  <VueSelecto v-bind="selectoOption" @select="onSelect" />
+  <VueSelecto v-if="selectoShow" v-bind="selectoOption" @select="onSelect" />
 </template>
 <script lang="ts" setup>
 import Moveable, { OnDrag, OnDragEnd, getElementInfo } from "vue3-moveable";
@@ -86,6 +86,7 @@ const moveableOptions: any = reactive(cloneDeep(defaultConfig));
 const moveableRef = ref<InstanceType<typeof Moveable>>();
 const widgetMoveable = useWidgetMoveable();
 
+const selectoShow = ref(false);
 const selectoOption = reactive<Partial<VueSelecto>>({
   selectableTargets: Object.keys(widgetMoveable)
     .map((key) =>
@@ -237,6 +238,19 @@ watch(
     }
   },
   { deep: true }
+);
+
+watch(
+  () => canvasStore.widgetRendererRef,
+  (value) => {
+    if (value) {
+      console.log("value:", value);
+      selectoOption.container = value;
+      selectoOption.dragContainer = value;
+      selectoOption.keyContainer = value;
+      selectoShow.value = true;
+    }
+  }
 );
 </script>
 <style lang="scss" scoped></style>

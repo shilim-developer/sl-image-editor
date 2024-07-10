@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="containerRef"
     class="position-relative overflow-hidden bg-gray-1"
     :style="{
       width: pageBound.containerWidth + 'px',
@@ -175,6 +176,11 @@ onMounted(() => {
     },
     { immediate: true, deep: true }
   );
+});
+
+const containerRef = ref<HTMLDivElement>();
+defineExpose({
+  containerRef,
 });
 </script>
 <style lang="scss" scoped></style>

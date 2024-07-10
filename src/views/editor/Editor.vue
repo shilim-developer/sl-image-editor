@@ -80,7 +80,7 @@
         bordered
         show-trigger="arrow-circle"
       >
-        <WaterFall
+        <image-panel
           class="w-full h-full overflow-visible"
           style="height: 100%"
         />
@@ -104,6 +104,7 @@
         v-element-size="onContentResize"
       >
         <widget-renderer
+          ref="widgetRendererRef"
           :container-size="containerSize"
           :page-margin="{
             top: 40,
@@ -167,6 +168,7 @@ const fontCanvas = ref(null);
 import { v4 as uuidV4 } from "uuid";
 import { vElementSize } from "@vueuse/components";
 import { getImageListApi } from "@/api/api";
+import WidgetRenderer from "@/components/layouts/widget-renderer/WidgetRenderer.vue";
 
 const canvasListStore = useCanvasListStore();
 const canvasStore = useCanvasStore();
@@ -233,9 +235,14 @@ function onCanvasListResize({ height }: { height: number }) {
   canvasListHeight.value = height;
 }
 
+const widgetRendererRef = ref<InstanceType<typeof WidgetRenderer>>();
 onMounted(() => {
   onContentResize();
-  getImageListApi();
+  console.log(widgetRendererRef.value);
+  canvasStore.setState({
+    widgetRendererRef: widgetRendererRef.value?.containerRef,
+  });
+  // getImageListApi();
 });
 </script>
 <style lang="less" scoped>
