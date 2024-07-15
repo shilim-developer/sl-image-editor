@@ -170,11 +170,11 @@ onMounted(() => {
         {
           width: canvasStore.pageWidget.bounds.width,
           height: canvasStore.pageWidget.bounds.height,
-        }
+        },
       );
       countSize(suitScale.value);
     },
-    { immediate: true, deep: true }
+    { immediate: true, deep: true },
   );
 });
 

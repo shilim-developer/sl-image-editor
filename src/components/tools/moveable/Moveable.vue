@@ -90,7 +90,7 @@ const selectoShow = ref(false);
 const selectoOption = reactive<Partial<VueSelecto>>({
   selectableTargets: Object.keys(widgetMoveable)
     .map((key) =>
-      widgetMoveable[key].options.isMultipleSelectable ? `.${key}` : ""
+      widgetMoveable[key].options.isMultipleSelectable ? `.${key}` : "",
     )
     .filter((item) => item),
   selectByClick: false,
@@ -206,14 +206,14 @@ const onResizeEnd = ({ inputEvent, lastEvent }: any) => {
 const canvasStore = useCanvasStore();
 const { canvasData } = storeToRefs(canvasStore);
 const { selectedWidgets, widgetList, widgetIndexMap } = toRefs(
-  canvasData.value
+  canvasData.value,
 );
 watch(
   () => selectedWidgets.value,
   (value) => {
     if (value.length > 0) {
       const selectedWidgets = value.map(
-        (item) => widgetList.value[widgetIndexMap.value[item]]
+        (item) => widgetList.value[widgetIndexMap.value[item]],
       );
       const widgetMoveableOptions =
         widgetMoveable[selectedWidgets[0].type].options;
@@ -237,7 +237,7 @@ watch(
       }
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 watch(
@@ -245,12 +245,12 @@ watch(
   (value) => {
     if (value) {
       console.log("value:", value);
-      selectoOption.container = value;
-      selectoOption.dragContainer = value;
-      selectoOption.keyContainer = value;
+      selectoOption.container = value.containerRef;
+      selectoOption.dragContainer = value.containerRef;
+      selectoOption.keyContainer = value.containerRef;
       selectoShow.value = true;
     }
-  }
+  },
 );
 </script>
 <style lang="scss" scoped></style>

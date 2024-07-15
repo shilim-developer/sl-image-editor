@@ -24,7 +24,7 @@ export const getScaleInfo = (
   elementRect: {
     width: number;
     height: number;
-  }
+  },
 ) => {
   const containerRatio = containerRect.width / containerRect.height;
   const elementRatio = elementRect.width / elementRect.height;

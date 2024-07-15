@@ -238,9 +238,8 @@ function onCanvasListResize({ height }: { height: number }) {
 const widgetRendererRef = ref<InstanceType<typeof WidgetRenderer>>();
 onMounted(() => {
   onContentResize();
-  console.log(widgetRendererRef.value);
   canvasStore.setState({
-    widgetRendererRef: widgetRendererRef.value?.containerRef,
+    widgetRendererRef: widgetRendererRef.value,
   });
   // getImageListApi();
 });

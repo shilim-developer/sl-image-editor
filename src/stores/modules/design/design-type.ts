@@ -1,6 +1,9 @@
+import WidgetRenderer from "@/components/layouts/widget-renderer/WidgetRenderer.vue";
+
 export interface CanvasState {
   activeMouseEvent: MouseEvent | null;
-  widgetRendererRef: HTMLDivElement | null;
+  widgetRendererRef: InstanceType<typeof WidgetRenderer>;
+  mouseIsOutside: boolean;
 }
 
 /**

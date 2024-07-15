@@ -7,7 +7,7 @@
       :get-list="getList"
     >
       <template #default="{ data }">
-        <widget-drag>
+        <widget-drag :data="data">
           <template #default="dragEvent">
             <n-image
               :draggable="false"

@@ -13,6 +13,7 @@ export const useCanvasStore = defineStore("canvasStore", {
   state: (): CanvasState => ({
     activeMouseEvent: null,
     widgetRendererRef: null,
+    mouseIsOutside: true,
   }),
   getters: {
     canvasData(): CanvasData {
@@ -26,14 +27,14 @@ export const useCanvasStore = defineStore("canvasStore", {
     selectedWidgetIndex() {
       const canvasListStore = useCanvasListStore();
       return canvasListStore.currentCanvas.selectedWidgets.map(
-        (item) => canvasListStore.currentCanvas.widgetIndexMap[item]
+        (item) => canvasListStore.currentCanvas.widgetIndexMap[item],
       );
     },
     selectedWidgetList() {
       const canvasListStore = useCanvasListStore();
       const currentCanvas = canvasListStore.currentCanvas;
       return currentCanvas.selectedWidgets.map(
-        (item) => currentCanvas.widgetList[currentCanvas.widgetIndexMap[item]]
+        (item) => currentCanvas.widgetList[currentCanvas.widgetIndexMap[item]],
       );
     },
     widgetSettingList() {
@@ -59,6 +60,9 @@ export const useCanvasStore = defineStore("canvasStore", {
         this.$patch(partial);
       }
     },
+    /**
+     * 设置组件列表
+     */
     setWidgetList(data: [WPageType, ...CommonWidgetType[]]) {
       this.canvasData.widgetList = reactive(data);
     },
@@ -67,7 +71,7 @@ export const useCanvasStore = defineStore("canvasStore", {
       deepAssign(canvasListStore.currentCanvas, data);
     },
     setWidgetData<T extends keyof WidgetTypeMap>(
-      data: (PowerPartial<WidgetTypeMap[T]> & { uuid: string })[]
+      data: (PowerPartial<WidgetTypeMap[T]> & { uuid: string })[],
     ) {
       const canvasListStore = useCanvasListStore();
       data.forEach((item) => {
@@ -75,9 +79,14 @@ export const useCanvasStore = defineStore("canvasStore", {
           canvasListStore.currentCanvas.widgetList[
             canvasListStore.currentCanvas.widgetIndexMap[item.uuid]
           ],
-          item
+          item,
         );
       });
+    },
+    addWidgetData<T extends keyof WidgetTypeMap>(data: WidgetTypeMap[T]) {
+      const canvasListStore = useCanvasListStore();
+      canvasListStore.currentCanvas.widgetList.push(data);
+      this.initWidgetIndexMap();
     },
     initWidgetIndexMap() {
       const canvasListStore = useCanvasListStore();
