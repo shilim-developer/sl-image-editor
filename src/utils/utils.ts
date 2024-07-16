@@ -1,5 +1,6 @@
 import { WidgetPosition } from "@/components/widgets/types/common";
 import { parseMat } from "css-to-mat";
+import { v4 as uuidV4 } from "uuid";
 
 export const getLastFolderName = (path: string) => {
   const parts = path.split("/");
@@ -68,4 +69,11 @@ export const getColorModeFromStr = (val: string): "gradient" | "solid" => {
   } else {
     return "solid";
   }
+};
+
+/**
+ * 获取一个uuid
+ */
+export const getUUID = () => {
+  return uuidV4();
 };

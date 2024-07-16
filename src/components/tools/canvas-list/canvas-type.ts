@@ -25,6 +25,12 @@ export const blankCanvasData: CanvasData = {
         y: 0,
         rotate: 20,
       },
+      background: {
+        type: "color",
+        colorType: "solid",
+        backgroundColor: "rgba(255,255,2555,1)",
+        backgroundImage: undefined,
+      },
     },
   ],
   widgetIndexMap: { "-1": 0 },

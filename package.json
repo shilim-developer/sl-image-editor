@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "format:code": "prettier --write \"(src|build)/**/*.(vue|js)\"",
+    "format:code": "prettier --write \"(src|build)/**/*.(vue|ts|tsx|js|css|scss)\"",
     "commit": "git-cz",
     "prepare": "husky"
   },
@@ -33,6 +33,7 @@
     "uuid": "^10.0.0",
     "vite-plugin-mock": "^3.0.2",
     "vue": "^3.4.19",
+    "vue-hooks-plus": "^2.2.1",
     "vue-router": "^4.3.0",
     "vue3-color-picker-gradient": "^0.7.0",
     "vue3-moveable": "^0.28.0",
@@ -44,13 +45,17 @@
     "@types/fabric": "^5.3.7",
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.11.20",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.0.4",
+    "@vue-hooks-plus/resolvers": "^1.2.5",
     "commitizen": "^4.3.0",
     "commitlint-config-cz": "^0.13.3",
     "cz-customizable": "^7.1.0",
     "cz-git": "^1.9.3",
     "husky": "^9.0.11",
+    "i": "^0.3.7",
     "lint-staged": "^15.2.7",
+    "npm": "^10.8.2",
     "prettier": "^3.3.2",
     "typescript": "^5.2.2",
     "unocss": "^0.58.5",
@@ -78,5 +83,6 @@
     "*.scss": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "pnpm@9.0.4"
 }

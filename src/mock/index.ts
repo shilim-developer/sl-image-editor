@@ -8,9 +8,9 @@ export default [
         message: "ok",
         "data|10": [
           {
-            "width|300-800.0-0": 300,
-            "height|300-800.0-0": 300,
-            url: "@image()",
+            width: 300,
+            height: 500,
+            url: "@image(300x500)",
           },
         ],
       };

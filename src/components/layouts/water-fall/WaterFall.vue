@@ -1,6 +1,6 @@
 <template>
   <n-infinite-scroll
-    :distance="50"
+    :distance="500"
     @load="getNewList"
     :on-scroll="handleScroll"
     ref="scrollRef"
@@ -112,7 +112,6 @@ const computeDomData = (list: any[], startRenderIdx = 0) => {
   const tempDomDataList = [];
   for (let i = 0; i < list.length; i++) {
     const param = {
-      ...list[i],
       idx: startRenderIdx + i,
       columnIdx: 0,
       width: columnWidth,
@@ -121,6 +120,7 @@ const computeDomData = (list: any[], startRenderIdx = 0) => {
       top: 0,
       //   text: testList[Math.trunc(Math.random() * 3)],
       lineHeight: 0, // 根据css设置的值计算得到
+      record: list[i],
     };
     // 排序，第一项必定是长度最短的一列
     positionList.sort((a, b) => a.columnHeight - b.columnHeight);
@@ -236,7 +236,9 @@ let lastScrollNumY = 0;
 // 上次滚动方向 向下 为 1，向上为 -1
 let scrollDirection = 1;
 // 窗口滚动事件
-const handleScroll = throttle(async () => {
+const handleScroll = throttle(() => {
+  console.log("last");
+
   scrollDirection =
     scrollRef.value!.scrollbarInstRef!.containerScrollTop - lastScrollNumY >= 0
       ? 1

@@ -51,7 +51,7 @@ import { useCanvasListStore } from "@/stores/modules/design/canvas-list";
 import { useCanvasStore } from "@/stores/modules/design/canvas";
 import { getScaleInfo } from "@/utils/utils";
 import { Add, Remove } from "@vicons/ionicons5";
-import { WidgetType, pageUUid } from "@/components/widgets/types/common";
+import { pageUUid } from "@/components/widgets/w-page/w-page-utils";
 type PropsType = {
   containerSize: { width: number; height: number };
   pageMargin: {

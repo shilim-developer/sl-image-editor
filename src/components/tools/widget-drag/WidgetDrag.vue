@@ -3,58 +3,57 @@
 </template>
 <script lang="ts" setup>
 import { WidgetType } from "@/components/widgets/types/common";
-import { WImageType } from "@/components/widgets/w-image/w-image-type";
 import { useCanvasStore } from "@/stores/modules/design/canvas";
 import { v4 as uuidV4 } from "uuid";
 
 const props = defineProps<{
   data: {
-    width: number;
-    height: number;
-    url: string;
+    record: {
+      url: string;
+      width: number;
+      height: number;
+    };
   };
 }>();
 
-let target: HTMLElement;
+let tempTarget: HTMLElement;
 const position = {
   x: 0,
   y: 0,
 };
-const handleMouseDown = (e) => {
+const handleMouseDown = (e: MouseEvent) => {
   e.stopPropagation();
   e.preventDefault();
-  const copyElement = e.target.cloneNode(true);
-  copyElement.style.width = e.target.offsetWidth + "px";
-  copyElement.style.height = e.target.offsetHeight + "px";
+  if (!e.target) return;
+  const targetElement = e.target as HTMLElement;
+  const copyElement: HTMLElement = targetElement.cloneNode(true) as HTMLElement;
+  copyElement.style.width = targetElement.offsetWidth + "px";
+  copyElement.style.height = targetElement.offsetHeight + "px";
   copyElement.style.position = "fixed";
-  copyElement.style.zIndex = 9999;
-  copyElement.style.left = e.target.getBoundingClientRect().left + "px";
-  copyElement.style.top = e.target.getBoundingClientRect().top + "px";
+  copyElement.style.zIndex = "9999";
+  copyElement.style.left = targetElement.getBoundingClientRect().left + "px";
+  copyElement.style.top = targetElement.getBoundingClientRect().top + "px";
   document.body.appendChild(copyElement);
-  target = copyElement;
+  tempTarget = copyElement;
   position.x = e.clientX;
   position.y = e.clientY;
   window.addEventListener("mousemove", handleMouseMove);
   window.addEventListener("mouseup", handleMouseUp);
-  //   copyElement.addEventListener("mouseleave", handleMouseMove);
 };
 
-const handleMouseMove = (e) => {
-  target.style.transform =
+const handleMouseMove = (e: MouseEvent) => {
+  tempTarget.style.transform =
     "translate(" +
     (e.clientX - position.x) +
     "px, " +
     (e.clientY - position.y) +
     "px)";
-  //   console.log("handleMouseMove", e);
 };
 
 const canvasStore = useCanvasStore();
-const handleMouseUp = (e) => {
-  console.log("e:", e);
+const handleMouseUp = (e: MouseEvent) => {
   window.removeEventListener("mousemove", handleMouseMove);
   window.removeEventListener("mouseup", handleMouseUp);
-
   const renderContainer = canvasStore.widgetRendererRef.containerRef!;
   const d_left = renderContainer.getBoundingClientRect().left;
   const d_top = renderContainer.getBoundingClientRect().top;
@@ -67,26 +66,26 @@ const handleMouseUp = (e) => {
     e.clientY > d_bottom
   ) {
     // 不在范围内
-    target.style.transition = "transform 0.5s ease";
-    target.style.transform = "translate(0px, 0px)";
+    tempTarget.style.transition = "transform 0.5s ease";
+    tempTarget.style.transform = "translate(0px, 0px)";
     setTimeout(() => {
-      target.remove();
+      tempTarget.remove();
     }, 500);
   } else {
     canvasStore.addWidgetData({
       uuid: uuidV4(),
       type: WidgetType.WImage,
       bounds: {
-        width: props.data.width,
-        height: props.data.height,
+        width: props.data.record.width,
+        height: props.data.record.height,
         x: e.clientX - d_left - e.offsetX,
         y: e.clientY - d_top - e.offsetY,
         rotate: 0,
       },
-      url: props.data.url,
+      url: props.data.record.url,
       parent: "-1",
     });
-    target.remove();
+    tempTarget.remove();
   }
 };
 </script>

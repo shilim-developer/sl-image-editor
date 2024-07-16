@@ -11,7 +11,7 @@
           <template #default="dragEvent">
             <n-image
               :draggable="false"
-              :src="data.url"
+              :src="data.record.url"
               class="w-full h-full"
               width="100%"
               height="100%"
@@ -27,7 +27,6 @@
 </template>
 <script lang="ts" setup>
 import { getImageListApi } from "@/api/api";
-import { WHList } from "@/components/layouts/water-fall/data";
 
 const dataList = ref<any[]>([]);
 

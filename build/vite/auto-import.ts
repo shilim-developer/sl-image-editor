@@ -1,6 +1,7 @@
 import AutoImport from "unplugin-auto-import/vite";
 
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
+import { VueHooksPlusResolver } from "@vue-hooks-plus/resolvers";
 
 export default function setupAutoImport() {
   return AutoImport({
@@ -17,7 +18,8 @@ export default function setupAutoImport() {
         ],
       },
     ],
-    resolvers: [NaiveUiResolver()],
+    include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /\.md$/],
+    resolvers: [VueHooksPlusResolver(), NaiveUiResolver()],
     dts: "types/auto-imports.d.ts",
   });
 }

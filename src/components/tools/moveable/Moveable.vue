@@ -20,7 +20,8 @@ import { getMatrix3dTransform } from "@/utils/utils";
 import { useWidgetMoveable } from "@/components/widgets/use-widget-moveable";
 import { useCanvasStore } from "@/stores/modules/design/canvas";
 import { storeToRefs } from "pinia";
-import { WidgetType, pageUUid } from "@/components/widgets/types/common";
+import { WidgetType } from "@/components/widgets/types/common";
+import { pageUUid } from "@/components/widgets/w-page/w-page-utils";
 
 const defaultConfig = {
   zoom: 0.8,
