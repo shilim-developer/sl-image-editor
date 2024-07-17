@@ -17,6 +17,7 @@ const props = defineProps<{
 }>();
 
 let tempTarget: HTMLElement;
+let tempOriginTarget: HTMLElement;
 const position = {
   x: 0,
   y: 0,
@@ -25,14 +26,16 @@ const handleMouseDown = (e: MouseEvent) => {
   e.stopPropagation();
   e.preventDefault();
   if (!e.target) return;
-  const targetElement = e.target as HTMLElement;
-  const copyElement: HTMLElement = targetElement.cloneNode(true) as HTMLElement;
-  copyElement.style.width = targetElement.offsetWidth + "px";
-  copyElement.style.height = targetElement.offsetHeight + "px";
+  tempOriginTarget = e.target as HTMLElement;
+  const copyElement: HTMLElement = tempOriginTarget.cloneNode(
+    true,
+  ) as HTMLElement;
+  copyElement.style.width = tempOriginTarget.offsetWidth + "px";
+  copyElement.style.height = tempOriginTarget.offsetHeight + "px";
   copyElement.style.position = "fixed";
   copyElement.style.zIndex = "9999";
-  copyElement.style.left = targetElement.getBoundingClientRect().left + "px";
-  copyElement.style.top = targetElement.getBoundingClientRect().top + "px";
+  copyElement.style.left = tempOriginTarget.getBoundingClientRect().left + "px";
+  copyElement.style.top = tempOriginTarget.getBoundingClientRect().top + "px";
   document.body.appendChild(copyElement);
   tempTarget = copyElement;
   position.x = e.clientX;
@@ -42,6 +45,15 @@ const handleMouseDown = (e: MouseEvent) => {
 };
 
 const handleMouseMove = (e: MouseEvent) => {
+  const diffX = e.clientX - position.x;
+  const maxWidth = canvasStore.canvasData.widgetList[0].bounds.width / 2;
+  console.log(tempOriginTarget.clientWidth, maxWidth);
+  if (
+    tempTarget.clientWidth < maxWidth &&
+    tempTarget.clientWidth > tempOriginTarget.clientWidth
+  ) {
+    tempTarget.style.width = `${tempOriginTarget.clientWidth + diffX}px`;
+  }
   tempTarget.style.transform =
     "translate(" +
     (e.clientX - position.x) +
@@ -55,6 +67,7 @@ const handleMouseUp = (e: MouseEvent) => {
   window.removeEventListener("mousemove", handleMouseMove);
   window.removeEventListener("mouseup", handleMouseUp);
   const renderContainer = canvasStore.widgetRendererRef.containerRef!;
+  const canvasContainer = canvasStore.widgetRendererRef.canvasRef!;
   const d_left = renderContainer.getBoundingClientRect().left;
   const d_top = renderContainer.getBoundingClientRect().top;
   const d_right = renderContainer.getBoundingClientRect().right;
@@ -72,14 +85,16 @@ const handleMouseUp = (e: MouseEvent) => {
       tempTarget.remove();
     }, 500);
   } else {
+    console.log(e.clientX, d_left, e.offsetX);
+
     canvasStore.addWidgetData({
       uuid: uuidV4(),
       type: WidgetType.WImage,
       bounds: {
         width: props.data.record.width,
         height: props.data.record.height,
-        x: e.clientX - d_left - e.offsetX,
-        y: e.clientY - d_top - e.offsetY,
+        x: e.clientX - canvasContainer.getBoundingClientRect().left - e.offsetX,
+        y: e.clientY - canvasContainer.getBoundingClientRect().top - e.offsetY,
         rotate: 0,
       },
       url: props.data.record.url,

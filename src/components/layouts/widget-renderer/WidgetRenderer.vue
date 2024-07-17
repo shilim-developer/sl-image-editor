@@ -8,6 +8,7 @@
     }"
   >
     <div
+      ref="canvasRef"
       class="position-absolute left-0 top-0"
       :style="{
         transformOrigin: 'left top',
@@ -179,8 +180,10 @@ onMounted(() => {
 });
 
 const containerRef = ref<HTMLDivElement>();
+const canvasRef = ref<HTMLDivElement>();
 defineExpose({
   containerRef,
+  canvasRef,
 });
 </script>
 <style lang="scss" scoped></style>
