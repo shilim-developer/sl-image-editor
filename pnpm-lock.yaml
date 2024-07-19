@@ -26,6 +26,9 @@ importers:
       css-to-mat:
         specifier: ^1.1.1
         version: 1.1.1
+      decimal.js:
+        specifier: ^10.4.3
+        version: 10.4.3
       fabric:
         specifier: ^5.3.0
         version: 5.3.0
@@ -4761,8 +4764,7 @@ snapshots:
     dependencies:
       ms: 2.1.2
 
-  decimal.js@10.4.3:
-    optional: true
+  decimal.js@10.4.3: {}
 
   decode-uri-component@0.2.2: {}
 
