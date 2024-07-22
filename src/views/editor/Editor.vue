@@ -115,7 +115,7 @@
         />
       </n-layout-content>
       <div
-        class="w-270px h-full b-t-0 b-r-0 b-b-0 b-l-1px b-solid border-gray-200 flex flex-col overflow-hidden"
+        class="flex-shrink-0 w-270px h-full b-t-0 b-r-0 b-b-0 b-l-1px b-solid border-gray-200 flex flex-col overflow-hidden"
         :collapsed-width="0"
         :native-scrollbar="false"
         bordered
@@ -155,7 +155,6 @@ import {
   WidgetType,
 } from "@/components/widgets/types/common";
 import { WPageType } from "@/components/widgets/w-page/w-page-type";
-import { useCanvasListStore } from "@/stores/modules/design/canvas-list";
 import { useCanvasStore } from "@/stores/modules/design/canvas";
 import {
   GridOutline,
@@ -163,14 +162,9 @@ import {
   TextOutline,
   ImageSharp,
 } from "@vicons/ionicons5";
-import { fabric } from "fabric";
-const fontCanvas = ref(null);
-import { v4 as uuidV4 } from "uuid";
 import { vElementSize } from "@vueuse/components";
-import { getImageListApi } from "@/api/api";
 import WidgetRenderer from "@/components/layouts/widget-renderer/WidgetRenderer.vue";
 
-const canvasListStore = useCanvasListStore();
 const canvasStore = useCanvasStore();
 
 const data: [WPageType, ...CommonWidgetType[]] = [
@@ -224,7 +218,7 @@ const containerSize = reactive({
 });
 const containerLeft = ref(0);
 function onContentResize() {
-  console.log(contentRef.value.$el.offset);
+  if (containerLeft.value === 365) return;
   containerSize.width = contentRef.value.$el.clientWidth;
   containerSize.height = contentRef.value.$el.clientHeight;
   containerLeft.value = contentRef.value.$el.offsetLeft;

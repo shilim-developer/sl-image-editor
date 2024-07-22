@@ -28,31 +28,21 @@
         :widget-info="item"
       ></component>
     </div>
-    <div class="position-fixed right-40px bottom-40px z-10">
-      <n-button-group>
-        <n-button @click="handleScale(1)">
-          <template #icon>
-            <n-icon><add /></n-icon>
-          </template>
-        </n-button>
-        <n-dropdown trigger="click" :options="options" @select="handleSelect">
-          <n-button> {{ Math.floor(pageBound.pageScale * 100) }}% </n-button>
-        </n-dropdown>
-        <n-button @click="handleScale(-1)">
-          <template #icon>
-            <n-icon><remove /></n-icon>
-          </template>
-        </n-button>
-      </n-button-group>
-    </div>
+    <resize-tool
+      :current-scale="currentScale"
+      :suit-scale="suitScale"
+      @scale="handleScale"
+    />
   </div>
 </template>
 <script lang="ts" setup>
 import { useCanvasListStore } from "@/stores/modules/design/canvas-list";
 import { useCanvasStore } from "@/stores/modules/design/canvas";
 import { getScaleInfo } from "@/utils/utils";
-import { Add, Remove } from "@vicons/ionicons5";
 import { pageUUid } from "@/components/widgets/w-page/w-page-utils";
+import { useResizeStore } from "@/stores/modules/design/resize";
+import { storeToRefs } from "pinia";
+
 type PropsType = {
   containerSize: { width: number; height: number };
   pageMargin: {
@@ -64,33 +54,28 @@ type PropsType = {
 };
 const props = defineProps<PropsType>();
 
-const options = [
-  {
-    label: "100%",
-    key: 1,
-  },
-  {
-    label: "适合屏幕",
-    key: 0,
-  },
-];
-const suitScale = ref(0);
-const handleSelect = (val: number) => {
-  countSize(val || suitScale.value);
-};
+const resizeStore = useResizeStore();
+const { suitScale, currentScale } = storeToRefs(resizeStore);
+
 function handleScale(number: number) {
-  suitScale.value = suitScale.value + number / 100;
-  countSize(suitScale.value);
+  resizeStore.setState({
+    currentScale: number,
+  });
+  console.log(currentScale.value);
+  countSize(currentScale.value);
 }
 
 const pageBound = ref({
+  // 容器宽度
   containerWidth: 0,
+  // 容器高度
   containerHeight: 0,
   pageLeft: 0,
   pageTop: 0,
   pageScale: 1,
 });
 
+// 计算缩放后的宽高
 function countSize(scale: number) {
   // 去掉间距后的可视容器宽高
   const realWidth =
@@ -155,6 +140,7 @@ onMounted(() => {
   watch(
     () => props,
     () => {
+      // 计算适配屏幕的尺寸
       const realWidth =
         props.containerSize.width -
         props.pageMargin.left -
@@ -163,7 +149,7 @@ onMounted(() => {
         props.containerSize.height -
         props.pageMargin.top -
         props.pageMargin.bottom;
-      suitScale.value = getScaleInfo(
+      const realScale = getScaleInfo(
         {
           width: realWidth,
           height: realHeight,
@@ -173,7 +159,11 @@ onMounted(() => {
           height: canvasStore.pageWidget.bounds.height,
         },
       );
-      countSize(suitScale.value);
+      resizeStore.setState({
+        suitScale: realScale,
+        currentScale: realScale,
+      });
+      countSize(realScale);
     },
     { immediate: true, deep: true },
   );

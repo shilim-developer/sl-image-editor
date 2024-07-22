@@ -18,7 +18,7 @@ export default function setupAutoImport() {
         ],
       },
     ],
-    include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /\.md$/],
+    // include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /\.md$/],
     resolvers: [VueHooksPlusResolver(), NaiveUiResolver()],
     dts: "types/auto-imports.d.ts",
   });

@@ -149,3 +149,8 @@ export function evaluatePostfix(expression: string): Decimal {
   // 栈顶元素即为表达式的计算结果
   return stack.pop()!;
 }
+
+export function decimalEvaluate(expression: string) {
+  const infixToPostfixExpression = infixToPostfix(expression);
+  return evaluatePostfix(infixToPostfixExpression);
+}

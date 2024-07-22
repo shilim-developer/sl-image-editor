@@ -7,7 +7,7 @@
         </template>
       </n-button>
       <n-dropdown trigger="click" :options="options" @select="handleSelect">
-        <n-button> {{ Math.floor(pageBound.pageScale * 100) }}% </n-button>
+        <n-button> {{ Math.floor(currentScale * 100) }}% </n-button>
       </n-dropdown>
       <n-button @click="handleScale(-1)">
         <template #icon>
@@ -18,6 +18,8 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { Add, Remove } from "@vicons/ionicons5";
+
 type PropsType = {
   // 当前缩放比例
   currentScale: number;
@@ -41,7 +43,11 @@ const options = [
 ];
 
 const handleSelect = (val: number) => {
-  emit("scale", val / 100);
+  emit("scale", val || props.suitScale);
+};
+
+const handleScale = (val: number) => {
+  emit("scale", (props.currentScale * 100 + val) / 100);
 };
 </script>
 <style lang="scss" scoped></style>
