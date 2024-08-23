@@ -7,13 +7,19 @@
     @dragEnd="onDragEnd"
     @rotate="onRotate"
     @rotateEnd="onRotateEnd"
+    @resizeStart="onResizeStart"
     @resize="onResize"
     @resizeEnd="onResizeEnd"
   />
   <VueSelecto v-if="selectoShow" v-bind="selectoOption" @select="onSelect" />
 </template>
 <script lang="ts" setup>
-import Moveable, { OnDrag, OnDragEnd, getElementInfo } from "vue3-moveable";
+import Moveable, {
+  OnDrag,
+  OnDragEnd,
+  OnResizeStart,
+  getElementInfo,
+} from "vue3-moveable";
 import { cloneDeep } from "lodash";
 import VueSelecto from "vue3-selecto";
 import { getMatrix3dTransform } from "@/utils/utils";
@@ -180,6 +186,12 @@ const onRotateEnd = async ({ inputEvent, lastEvent }: any) => {
     },
   ]);
 };
+
+const onResizeStart = (e: OnResizeStart) => {
+  const widgetIndex = canvasStore.selectedWidgetIndex[0];
+  const type = widgetList.value[widgetIndex].type;
+  widgetMoveable[type]?.onResizeStart(moveableOptions, e);
+};
 const onResize = (e: any) => {
   const { inputEvent, target, width, height } = e;
   // console.log(e);
@@ -212,7 +224,31 @@ const { selectedWidgets, widgetList, widgetIndexMap } = toRefs(
 watch(
   () => selectedWidgets.value,
   (value) => {
-    if (value.length > 0) {
+    if (value.length === 1) {
+      const selectedWidgets = value.map(
+        (item) => widgetList.value[widgetIndexMap.value[item]],
+      );
+      const widgetMoveableOptions =
+        widgetMoveable[selectedWidgets[0].type].options;
+      moveableOptions.renderDirections = widgetMoveableOptions.renderDirections;
+      moveableOptions.target =
+        value.length === 1
+          ? document.getElementById(value[0])
+          : value.map((item) => document.getElementById(item));
+      moveableOptions.rotatable = widgetMoveableOptions.rotatable;
+      if (selectedWidgets[0].type === WidgetType.WPage) {
+        moveableOptions.draggable = false;
+      } else {
+        moveableOptions.draggable = true;
+        if (canvasStore.activeMouseEvent) {
+          const tempActiveMouseEvent = canvasStore.activeMouseEvent;
+          console.log("tempActiveMouseEvent:", tempActiveMouseEvent);
+          nextTick(() => {
+            moveableRef.value?.dragStart(tempActiveMouseEvent);
+          });
+        }
+      }
+    } else if (value.length > 1) {
       const selectedWidgets = value.map(
         (item) => widgetList.value[widgetIndexMap.value[item]],
       );

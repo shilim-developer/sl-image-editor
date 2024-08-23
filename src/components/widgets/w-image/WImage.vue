@@ -26,12 +26,13 @@ const canvasRef = ref<HTMLCanvasElement>();
 let canvas: fabric.Canvas;
 onMounted(() => {
   fabric.Image.fromURL(props.widgetInfo.url, (img) => {
+    console.log("img:", img);
     console.log(props.widgetInfo.bounds.width);
 
     canvas = new fabric.Canvas(canvasRef.value!);
     img.selectable = false;
-    img.width = props.widgetInfo.bounds.width;
-    img.height = props.widgetInfo.bounds.height;
+    // img.width = props.widgetInfo.bounds.width;
+    // img.height = props.widgetInfo.bounds.height;
     canvas.add(img);
     canvas.setWidth(props.widgetInfo.bounds.width);
     canvas.setHeight(props.widgetInfo.bounds.height);
