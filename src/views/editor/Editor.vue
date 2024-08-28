@@ -194,6 +194,12 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       y: 0,
       rotate: 10,
     },
+    origin: {
+      width: 100,
+      height: 100,
+      x: 0,
+      y: 0,
+    },
   },
   {
     type: WidgetType.WImage,
@@ -205,6 +211,12 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       x: 100,
       y: 100,
       rotate: 20,
+    },
+    origin: {
+      width: 100,
+      height: 100,
+      x: 0,
+      y: 0,
     },
   },
 ];

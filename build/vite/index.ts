@@ -4,6 +4,7 @@ import vue from "@vitejs/plugin-vue";
 import setupAutoImport from "./auto-import";
 import setupVueComponents from "./vue-components";
 import setupMockServer from "./mock";
+import vueDevTools from "vite-plugin-vue-devtools";
 // import mkcert from "vite-plugin-mkcert";
 // import setupRequire from "./require";
 // import { testPlugin } from "./test";
@@ -31,6 +32,8 @@ export default function setupVitePlugins() {
 
   // vite-plugin-mock
   vitePlugins.push(setupMockServer());
+
+  vitePlugins.push(vueDevTools());
 
   return vitePlugins;
 }

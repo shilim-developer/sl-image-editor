@@ -31,11 +31,12 @@ onMounted(() => {
 
     canvas = new fabric.Canvas(canvasRef.value!);
     img.selectable = false;
-    // img.width = props.widgetInfo.bounds.width;
-    // img.height = props.widgetInfo.bounds.height;
+    // img.width = props.widgetInfo.origin.width || props.widgetInfo.bounds.width;
+    // img.height =
+    //   props.widgetInfo.origin.height || props.widgetInfo.bounds.width;
     canvas.add(img);
-    canvas.setWidth(props.widgetInfo.bounds.width);
-    canvas.setHeight(props.widgetInfo.bounds.height);
+    canvas.setWidth(props.widgetInfo.origin.width);
+    canvas.setHeight(props.widgetInfo.origin.height);
     canvas.setDimensions(
       {
         width: "100%",

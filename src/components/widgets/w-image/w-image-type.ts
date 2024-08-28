@@ -10,6 +10,8 @@ export interface WImageType extends CommonWidgetType {
     height: number;
   };
   origin: {
+    width: number;
+    height: number;
     x: number;
     y: number;
   };

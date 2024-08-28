@@ -6,20 +6,30 @@ export enum WidgetType {
   "WImage" = "WImage",
 }
 
-export interface WidgetPosition {
+export enum FlipType {
+  "HORIZONTAL" = "HORIZONTAL",
+  "VERTICAL" = "VERTICAL",
+}
+
+export interface WidgetBounds {
+  width: number;
+  height: number;
   x: number;
   y: number;
   rotate: number;
+  scale: number;
 }
 
 export interface CommonWidgetType {
   type: WidgetType;
   uuid: string;
   parent: string;
-  bounds: {
-    width: number;
-    height: number;
-  } & WidgetPosition;
+  bounds: WidgetBounds;
+  attribute: {
+    transparency: number;
+    flip: FlipType | null;
+    lock: boolean;
+  };
 }
 
 export type WidgetTypeMap = {

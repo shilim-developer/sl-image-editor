@@ -217,32 +217,25 @@ const onResizeEnd = ({ inputEvent, lastEvent }: any) => {
 };
 
 const canvasStore = useCanvasStore();
-const { canvasData } = storeToRefs(canvasStore);
+const { canvasData, selectedWidgetList } = storeToRefs(canvasStore);
 const { selectedWidgets, widgetList, widgetIndexMap } = toRefs(
   canvasData.value,
 );
 watch(
-  () => selectedWidgets.value,
+  () => selectedWidgetList.value,
   (value) => {
+    // 只选择一个
     if (value.length === 1) {
-      const selectedWidgets = value.map(
-        (item) => widgetList.value[widgetIndexMap.value[item]],
-      );
-      const widgetMoveableOptions =
-        widgetMoveable[selectedWidgets[0].type].options;
-      moveableOptions.renderDirections = widgetMoveableOptions.renderDirections;
-      moveableOptions.target =
-        value.length === 1
-          ? document.getElementById(value[0])
-          : value.map((item) => document.getElementById(item));
-      moveableOptions.rotatable = widgetMoveableOptions.rotatable;
-      if (selectedWidgets[0].type === WidgetType.WPage) {
+      const currentWidget = value[0];
+      const widgetType = currentWidget.type;
+      const widgetMoveableOptions = widgetMoveable[widgetType].options;
+      moveableOptions.target = document.getElementById(currentWidget.uuid);
+      Object.assign(moveableOptions, widgetMoveableOptions);
+      if (currentWidget.type === WidgetType.WPage) {
         moveableOptions.draggable = false;
       } else {
-        moveableOptions.draggable = true;
         if (canvasStore.activeMouseEvent) {
           const tempActiveMouseEvent = canvasStore.activeMouseEvent;
-          console.log("tempActiveMouseEvent:", tempActiveMouseEvent);
           nextTick(() => {
             moveableRef.value?.dragStart(tempActiveMouseEvent);
           });

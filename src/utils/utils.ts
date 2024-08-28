@@ -1,4 +1,4 @@
-import { WidgetPosition } from "@/components/widgets/types/common";
+import { WidgetBounds } from "@/components/widgets/types/common";
 import { parseMat } from "css-to-mat";
 import { v4 as uuidV4 } from "uuid";
 
@@ -7,7 +7,7 @@ export const getLastFolderName = (path: string) => {
   return parts[parts.length - 2];
 };
 
-export const getMatrix3dTransform = (position: WidgetPosition | string) => {
+export const getMatrix3dTransform = (position: WidgetBounds | string) => {
   let cssText = "";
   if (typeof position === "string") {
     cssText = position;
@@ -76,4 +76,31 @@ export const getColorModeFromStr = (val: string): "gradient" | "solid" => {
  */
 export const getUUID = () => {
   return uuidV4();
+};
+
+type typeFilterString<T extends Record<any, any>> = {
+  [Key in keyof T as `on${Capitalize<Key & string>}`]: T[Key];
+};
+
+export const emitsBind = <T extends { [key: string]: Function }>(
+  emitsObject: T,
+  emits: any,
+): typeFilterString<T> => {
+  return Object.keys(emitsObject).reduce(
+    (obj: { [key: string]: any }, key: string) => {
+      const name = "on" + key.slice(0, 1).toUpperCase() + key.slice(1);
+      obj[name] = (...args: any[]) => emits(key, ...args);
+      return obj;
+    },
+    {},
+  ) as typeFilterString<T>;
+};
+
+export const expression2Object = (expression: string, value: any) => {
+  const arr = expression.split(".");
+  let obj = value;
+  for (let i = arr.length - 1; i >= 0; i--) {
+    obj = { [arr[i]]: obj };
+  }
+  return obj;
 };

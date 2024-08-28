@@ -113,5 +113,13 @@ export const useCanvasStore = defineStore("canvasStore", {
       canvasListStore.currentCanvas.widgetList.push(data);
       this.initWidgetIndexMap();
     },
+    /**
+     * 选择组件
+     * @param {string} uuid
+     */
+    selectWidget(uuid: string) {
+      const canvasListStore = useCanvasListStore();
+      deepAssign(canvasListStore.currentCanvas.selectedWidgets, [uuid]);
+    },
   },
 });

@@ -8,6 +8,7 @@ export default {
     renderDirections: ["nw", "n", "ne", "w", "e", "sw", "s", "se"],
     rotatable: true,
     scalable: true,
+    draggable: true,
   },
   onResizeStart(moveableOptions: any, event: OnResizeStart) {
     const { direction } = event;

@@ -154,3 +154,19 @@ export function decimalEvaluate(expression: string) {
   const infixToPostfixExpression = infixToPostfix(expression);
   return evaluatePostfix(infixToPostfixExpression);
 }
+
+export function decimalEvaluateToNumber(
+  expression: string,
+  prefix: number = 0,
+) {
+  return parseInt(
+    decimalEvaluate(expression).toFixed(prefix, Decimal.ROUND_HALF_UP),
+  );
+}
+
+export function decimalEvaluateToString(
+  expression: string,
+  prefix: number = 0,
+) {
+  return decimalEvaluate(expression).toFixed(prefix, Decimal.ROUND_HALF_UP);
+}

@@ -8,9 +8,9 @@ export default [
         message: "ok",
         "data|10": [
           {
-            width: 300,
-            height: 500,
-            url: "@image(300x500)",
+            width: 900,
+            height: 1347,
+            url: "https://img.pconline.com.cn/images/upload/upc/tx/itbbs/2101/25/c1/251135935_1611532823091_mthumb.jpg",
           },
         ],
       };
