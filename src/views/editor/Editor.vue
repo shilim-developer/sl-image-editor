@@ -178,6 +178,9 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       x: 0,
       y: 0,
       rotate: 0,
+      flipX: 1,
+      flipY: 1,
+      scale: 1,
     },
     background: {
       type: "color",
@@ -193,6 +196,9 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       x: 0,
       y: 0,
       rotate: 10,
+      flipX: 1,
+      flipY: 1,
+      scale: 1,
     },
     origin: {
       width: 100,
@@ -211,6 +217,9 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       x: 100,
       y: 100,
       rotate: 20,
+      flipX: 1,
+      flipY: 1,
+      scale: 1,
     },
     origin: {
       width: 100,

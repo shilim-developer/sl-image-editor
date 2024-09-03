@@ -122,7 +122,12 @@ const handleMouseUp = (e: MouseEvent) => {
         y: decimalEvaluateToNumber(
           `(${e.clientY} - ${canvasContainer.getBoundingClientRect().top} - ${e.offsetY}) / ${resizeStore.currentScale}`,
         ),
+      },
+      transform: {
         rotate: 0,
+        scale: 1,
+        flipX: 1,
+        flipY: 1,
       },
       url: props.data.record.url,
       origin: {
@@ -138,6 +143,8 @@ const handleMouseUp = (e: MouseEvent) => {
         height: 0,
       },
       parent: "-1",
+      opacity: 0,
+      lock: false,
     });
     canvasStore.selectWidget(uuid);
     tempTarget.remove();

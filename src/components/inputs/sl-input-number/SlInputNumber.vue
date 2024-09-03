@@ -23,6 +23,10 @@ const emits = defineEmits(slInputNumberEmits);
 const bindValue = useExtendBindValue(props, [slInputNumberEmits, emits], attrs);
 const modalValue = ref<number>(props.value || 0);
 
+watchEffect(() => {
+  modalValue.value = props.value || 0;
+});
+
 function handleEndInput() {
   emits("endInput", modalValue.value);
 }

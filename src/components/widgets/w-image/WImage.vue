@@ -5,17 +5,16 @@
       width: `${widgetInfo.bounds.width}px`,
       height: `${widgetInfo.bounds.height}px`,
       background: '#f6f8fa',
-      transform: getMatrix3dTransform(widgetInfo.bounds),
+      transform: transform,
     }"
   >
     <canvas ref="canvasRef" class="w-full h-full"></canvas>
-    <!-- {{ widgetInfo.bounds }} -->
   </div>
 </template>
 <script lang="ts" setup>
-import { getMatrix3dTransform } from "@/utils/utils";
 import { WImageType } from "./w-image-type";
 import { fabric } from "fabric";
+import { useWidgetTransform } from "@/hooks/use-widget-transform";
 
 type PropsType = {
   widgetInfo: WImageType;
@@ -24,6 +23,9 @@ type PropsType = {
 const props = defineProps<PropsType>();
 const canvasRef = ref<HTMLCanvasElement>();
 let canvas: fabric.Canvas;
+
+const transform = useWidgetTransform(props.widgetInfo);
+
 onMounted(() => {
   fabric.Image.fromURL(props.widgetInfo.url, (img) => {
     console.log("img:", img);

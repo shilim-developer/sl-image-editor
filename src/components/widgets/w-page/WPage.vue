@@ -5,20 +5,21 @@
       width: `${widgetInfo.bounds.width}px`,
       height: `${widgetInfo.bounds.height}px`,
       background: widgetInfo.background.backgroundColor,
-      transform: getMatrix3dTransform(widgetInfo.bounds),
+      transform: transform,
     }"
   ></div>
 </template>
 <script lang="ts" setup>
+import { useWidgetTransform } from "@/hooks/use-widget-transform";
 import { CommonWidgetType } from "../types/common";
 import { WPageType } from "./w-page-type";
-import { getMatrix3dTransform } from "@/utils/utils";
 
 type PropsType = {
   widgetInfo: WPageType;
   widgetList: CommonWidgetType[];
 };
 
-defineProps<PropsType>();
+const props = defineProps<PropsType>();
+const transform = useWidgetTransform(props.widgetInfo);
 </script>
 <style lang="scss" scoped></style>

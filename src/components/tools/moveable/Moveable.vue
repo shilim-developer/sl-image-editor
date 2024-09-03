@@ -176,12 +176,12 @@ const onRotateEnd = async ({ inputEvent, lastEvent }: any) => {
   inputEvent.preventDefault();
   console.log("lastEvent:", lastEvent);
   const widgetIndex = canvasStore.selectedWidgetIndex[0];
-  const bounds = widgetList.value[widgetIndex].bounds;
+  const transform = widgetList.value[widgetIndex].transform;
   canvasStore.setWidgetData([
     {
       uuid: selectedWidgets.value[0],
-      bounds: {
-        rotate: bounds.rotate + lastEvent.rotate,
+      transform: {
+        rotate: transform.rotate + lastEvent.rotate,
       },
     },
   ]);

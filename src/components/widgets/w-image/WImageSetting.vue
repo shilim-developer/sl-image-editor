@@ -52,6 +52,39 @@
         </n-flex>
       </div>
     </n-collapse-item>
+    <n-collapse-item :name="2">
+      <template #header>
+        <div class="font-bold">位置</div>
+      </template>
+      <div class="p-l-3 p-r-3">
+        <n-flex justify="space-between">
+          <sl-input-number
+            :value="inputForm?.bounds.x"
+            class="w-47%"
+            placeholder=""
+            size="small"
+            :show-button="false"
+            :precision="0"
+            @end-input="changeWidgetData('bounds.x', $event)"
+          >
+            <template #suffix>
+              <span class="color-gray-4"> X </span>
+            </template>
+          </sl-input-number>
+          <sl-input-number
+            :value="inputForm?.bounds.y"
+            class="w-47%"
+            placeholder=""
+            size="small"
+            :show-button="false"
+          >
+            <template #suffix>
+              <span class="color-gray-4"> Y </span>
+            </template>
+          </sl-input-number>
+        </n-flex>
+      </div>
+    </n-collapse-item>
   </n-collapse>
   <div class="p-3">
     <n-tabs justify-content="space-evenly" type="line" trigger="hover">
@@ -70,31 +103,73 @@
         <template #tab>
           <n-icon class="w-100%" :size="16"><FlipHorizontal16Filled /></n-icon>
         </template>
-        <n-radio-group>
-          <n-radio-button>无</n-radio-button>
-          <n-radio-button>水平翻转</n-radio-button>
-          <n-radio-button>垂直翻转</n-radio-button>
-        </n-radio-group>
+        <n-flex justify="space-between">
+          <n-button
+            size="small"
+            class="flex-1"
+            @click="
+              changeWidgetData('transform.flipX', -inputForm.transform.flipX)
+            "
+          >
+            水平翻转
+          </n-button>
+          <n-button
+            size="small"
+            class="flex-1"
+            @click="
+              changeWidgetData('transform.flipY', -inputForm.transform.flipY)
+            "
+          >
+            垂直翻转
+          </n-button>
+        </n-flex>
       </n-tab-pane>
-      <n-tab-pane name="jay chou"
-        ><template #tab>
-          <n-icon class="w-100%" :size="16"
-            ><AlignCenterHorizontal20Filled
-          /></n-icon>
+      <n-tab-pane name="jay chou">
+        <template #tab>
+          <n-icon class="w-100%" :size="16">
+            <AlignCenterHorizontal20Filled />
+          </n-icon>
         </template>
-        七里香
+        <n-flex justify="space-between" :wrap="false">
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button> 鸭子 </n-button>
+            </template>
+            如果它长得像鸭子，走起来像鸭子，叫起来也像鸭子，那它一定是个鸭子。
+          </n-tooltip>
+          <n-button size="small" class="flex-1 p-l-1 p-r-1">
+            <n-icon class="w-100%" :size="16">
+              <AlignStartHorizontal20Filled />
+            </n-icon>
+          </n-button>
+          <n-button size="small" class="flex-1 p-l-1 p-r-1">
+            <n-icon class="w-100%" :size="16">
+              <AlignEndHorizontal20Filled />
+            </n-icon>
+          </n-button>
+          <n-button size="small" class="flex-1 p-l-1 p-r-1">
+            <n-icon class="w-100%" :size="16">
+              <AlignStartVertical20Filled />
+            </n-icon>
+          </n-button>
+          <n-button size="small" class="flex-1 p-l-1 p-r-1">
+            <n-icon class="w-100%" :size="16">
+              <AlignEndVertical20Filled />
+            </n-icon>
+          </n-button>
+          <n-button size="small" class="flex-1 p-l-1 p-r-1">
+            <n-icon class="w-100%" :size="16">
+              <AlignCenterHorizontal16Filled />
+            </n-icon>
+          </n-button>
+          <n-button size="small" class="flex-1 p-l-1 p-r-1">
+            <n-icon class="w-100%" :size="16">
+              <AlignCenterVertical16Filled />
+            </n-icon>
+          </n-button>
+        </n-flex>
       </n-tab-pane>
     </n-tabs>
-    <n-button secondary type="info">
-      <template #icon>
-        <n-icon><LayersOutline /></n-icon>
-      </template>
-    </n-button>
-    <n-button quaternary type="info">
-      <template #icon>
-        <n-icon><FlipHorizontal16Filled /></n-icon>
-      </template>
-    </n-button>
   </div>
 </template>
 <script lang="ts" setup>
@@ -108,6 +183,12 @@ import {
 import {
   FlipHorizontal16Filled,
   AlignCenterHorizontal20Filled,
+  AlignStartHorizontal20Filled,
+  AlignEndHorizontal20Filled,
+  AlignStartVertical20Filled,
+  AlignEndVertical20Filled,
+  AlignCenterHorizontal16Filled,
+  AlignCenterVertical16Filled,
 } from "@vicons/fluent";
 import { cloneDeep } from "lodash";
 import { WImageType } from "./w-image-type";
@@ -118,10 +199,12 @@ const inputForm = ref<WImageType>(
   cloneDeep(canvasStore.selectedWidgetList[0] as WImageType),
 );
 watchEffect(() => {
+  console.log("inputForm:", canvasStore.selectedWidgetList[0]);
   inputForm.value = cloneDeep(canvasStore.selectedWidgetList[0] as WImageType);
 });
 
 function changeWidgetData(name: string, value: any) {
+  console.log("name:", name, inputForm.value.bounds);
   canvasStore.setWidgetData([
     { uuid: inputForm.value.uuid, ...expression2Object(name, value) },
   ]);

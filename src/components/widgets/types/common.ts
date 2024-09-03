@@ -16,8 +16,13 @@ export interface WidgetBounds {
   height: number;
   x: number;
   y: number;
+}
+
+export interface WidgetTransform {
   rotate: number;
   scale: number;
+  flipX: 1 | -1;
+  flipY: 1 | -1;
 }
 
 export interface CommonWidgetType {
@@ -25,11 +30,9 @@ export interface CommonWidgetType {
   uuid: string;
   parent: string;
   bounds: WidgetBounds;
-  attribute: {
-    transparency: number;
-    flip: FlipType | null;
-    lock: boolean;
-  };
+  transform: WidgetTransform;
+  opacity: number;
+  lock: boolean;
 }
 
 export type WidgetTypeMap = {

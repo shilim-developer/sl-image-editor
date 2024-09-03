@@ -1,4 +1,7 @@
-import { WidgetBounds } from "@/components/widgets/types/common";
+import {
+  WidgetBounds,
+  WidgetTransform,
+} from "@/components/widgets/types/common";
 import { parseMat } from "css-to-mat";
 import { v4 as uuidV4 } from "uuid";
 
@@ -7,12 +10,14 @@ export const getLastFolderName = (path: string) => {
   return parts[parts.length - 2];
 };
 
-export const getMatrix3dTransform = (position: WidgetBounds | string) => {
+export const getMatrix3dTransform = (
+  data: (WidgetBounds & WidgetTransform) | string,
+) => {
   let cssText = "";
-  if (typeof position === "string") {
-    cssText = position;
+  if (typeof data === "string") {
+    cssText = data;
   } else {
-    cssText = `translate(${position.x}px, ${position.y}px) rotate(${position.rotate}deg)`;
+    cssText = `translate(${data.x}px, ${data.y}px) rotate(${data.rotate}deg) scale(${data.flipX} , ${data.flipY})`;
   }
   return `matrix3d(${parseMat(cssText).join(", ")})`;
 };
