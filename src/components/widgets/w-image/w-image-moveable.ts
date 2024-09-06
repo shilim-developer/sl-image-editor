@@ -1,7 +1,13 @@
 import { DirectionType } from "./../../tools/moveable/moveable-utils";
 import { getDirection } from "@/components/tools/moveable/moveable-utils";
-import { OnResizeStart } from "vue3-moveable";
+import { useCanvasStore } from "@/stores/modules/design/canvas";
+import { OnDrag, OnResize, OnResizeStart } from "vue3-moveable";
+import { wImageEmitter } from "./w-image-event";
+import { useMoveableStore } from "@/components/tools/moveable/moveable-store";
+import { storeToRefs } from "pinia";
 
+const moveableStore = useMoveableStore();
+const { moveableOptions } = storeToRefs(moveableStore);
 export default {
   options: {
     isMultipleSelectable: true,
@@ -10,8 +16,20 @@ export default {
     scalable: true,
     draggable: true,
   },
-  onResizeStart(moveableOptions: any, event: OnResizeStart) {
+  onDrag(event: OnDrag) {
+    const { left, top } = event;
+    const selectWidget = useCanvasStore().selectedWidgetList[0];
+    console.log(selectWidget.bounds.x, left);
+    wImageEmitter.emit("CHANGE_INPUT_FORM", {
+      bounds: {
+        x: selectWidget.bounds.x + left,
+        y: selectWidget.bounds.y + top,
+      },
+    });
+  },
+  onResizeStart(event: OnResizeStart) {
     const { direction } = event;
+
     const directionType = getDirection(direction);
     if (
       directionType &&
@@ -22,9 +40,21 @@ export default {
         DirectionType.nw,
       ].includes(directionType)
     ) {
-      moveableOptions.keepRatio = true;
+      moveableOptions.value.keepRatio = true;
     } else {
-      moveableOptions.keepRatio = false;
+      moveableOptions.value.keepRatio = false;
     }
+  },
+  onResize(event: OnResize) {
+    const { width, height, drag } = event;
+    const selectWidget = useCanvasStore().selectedWidgetList[0];
+    wImageEmitter.emit("CHANGE_INPUT_FORM", {
+      bounds: {
+        width,
+        height,
+        x: selectWidget.bounds.x + drag.translate[0],
+        y: selectWidget.bounds.y + drag.translate[1],
+      },
+    });
   },
 };

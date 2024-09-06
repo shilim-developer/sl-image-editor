@@ -192,7 +192,10 @@ import {
 } from "@vicons/fluent";
 import { cloneDeep } from "lodash";
 import { WImageType } from "./w-image-type";
-import { expression2Object } from "@/utils/utils";
+import { deepAssign, expression2Object } from "@/utils/utils";
+import { useMoveableEvent } from "@/components/tools/moveable/use-movaeable-event";
+import { WidgetBounds } from "../types/common";
+import { useWImageEvent } from "./w-image-event";
 
 const canvasStore = useCanvasStore();
 const inputForm = ref<WImageType>(
@@ -209,5 +212,33 @@ function changeWidgetData(name: string, value: any) {
     { uuid: inputForm.value.uuid, ...expression2Object(name, value) },
   ]);
 }
+
+useWImageEvent("CHANGE_INPUT_FORM", (event) => {
+  deepAssign(inputForm.value, event);
+});
+
+let tempBounds: WidgetBounds;
+useMoveableEvent("ON_DRAG_START", () => {
+  tempBounds = cloneDeep(inputForm.value.bounds);
+});
+
+useMoveableEvent("ON_DRAG", (event) => {
+  const { left, top } = event;
+  console.log("ON_RESIZE:", event);
+  inputForm.value.bounds.x = tempBounds.x + left;
+  inputForm.value.bounds.y = tempBounds.y + top;
+});
+
+useMoveableEvent("ON_RESIZE_START", () => {
+  tempBounds = cloneDeep(inputForm.value.bounds);
+});
+
+useMoveableEvent("ON_RESIZE", (event) => {
+  const { width, height, drag } = event;
+  inputForm.value.bounds.width = width;
+  inputForm.value.bounds.height = height;
+  inputForm.value.bounds.x = tempBounds.x + drag.translate[0];
+  inputForm.value.bounds.y = tempBounds.y + drag.translate[1];
+});
 </script>
 <style lang="scss" scoped></style>

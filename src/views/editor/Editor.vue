@@ -164,6 +164,7 @@ import {
 } from "@vicons/ionicons5";
 import { vElementSize } from "@vueuse/components";
 import WidgetRenderer from "@/components/layouts/widget-renderer/WidgetRenderer.vue";
+import { getUUID } from "@/utils/utils";
 
 const canvasStore = useCanvasStore();
 
@@ -228,6 +229,27 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       y: 0,
     },
   },
+  ...Array.from({ length: 200 }).map(() => ({
+    type: WidgetType.WImage,
+    uuid: getUUID(),
+    parent: "-1",
+    bounds: {
+      width: 100,
+      height: 100,
+      x: 100,
+      y: 100,
+      rotate: 20,
+      flipX: 1,
+      flipY: 1,
+      scale: 1,
+    },
+    origin: {
+      width: 100,
+      height: 100,
+      x: 0,
+      y: 0,
+    },
+  })),
 ];
 canvasStore.setWidgetList(data);
 canvasStore.initWidgetIndexMap();

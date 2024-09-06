@@ -3,8 +3,10 @@
     className="moveable"
     ref="moveableRef"
     v-bind="moveableOptions"
+    @dragStart="onDragStart"
     @drag="onDrag"
     @dragEnd="onDragEnd"
+    @rotateStart="onRotateStart"
     @rotate="onRotate"
     @rotateEnd="onRotateEnd"
     @resizeStart="onResizeStart"
@@ -17,10 +19,16 @@
 import Moveable, {
   OnDrag,
   OnDragEnd,
+  OnDragStart,
+  OnResize,
+  OnResizeEnd,
   OnResizeStart,
+  OnRotate,
+  OnRotateEnd,
+  OnRotateStart,
   getElementInfo,
 } from "vue3-moveable";
-import { cloneDeep } from "lodash";
+import { throttle } from "lodash";
 import VueSelecto from "vue3-selecto";
 import { getMatrix3dTransform } from "@/utils/utils";
 import { useWidgetMoveable } from "@/components/widgets/use-widget-moveable";
@@ -28,70 +36,22 @@ import { useCanvasStore } from "@/stores/modules/design/canvas";
 import { storeToRefs } from "pinia";
 import { WidgetType } from "@/components/widgets/types/common";
 import { pageUUid } from "@/components/widgets/w-page/w-page-utils";
+import { MoveableEvent } from "./use-movaeable-event";
+import { useMoveableStore } from "@/stores/modules/design/moveable";
 
-const defaultConfig = {
-  zoom: 0.8,
-  draggable: true,
-  clippable: false, // 裁剪
-  clipTargetBounds: true, // 裁剪区域是否必须在边界内, default: false
-  clipArea: true, // 裁剪选区是否支持drag
-  // dragWithClip: true,  // 裁剪框跟随拖动框
-  throttleDrag: 1,
-  resizable: true,
-  throttleResize: 1,
-  scalable: false,
-  throttleScale: 0,
-  keepRatio: false,
-  rotatable: true,
-  throttleRotate: 0,
-  renderDirections: ["nw", "ne", "sw", "se"], // ['nw', 'ne', 'sw', 'se'] // 'e'
-  pinchable: true, // ["draggable", "resizable", "scalable", "rotatable"]
-  origin: false,
-  defaultGroupOrigin: "50% 50%",
-  // 样式相关
-  rotationPosition: "bottom",
-  className: "zk-moveable-style",
-  // -- 吸附对齐 Start --
-  snappable: true,
-  // 最大吸附显示距离
-  maxSnapElementGuidelineDistance: 70,
-  // 吸附方向
-  snapDirections: {
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-    center: true,
-    middle: true,
-  },
-  // 吸附元素
-  elementGuidelines: [],
-  // 吸附元素方向
-  elementSnapDirections: {
-    top: true,
-    left: true,
-    bottom: true,
-    right: true,
-    center: true,
-    middle: true,
-  },
-  // 垂直吸附线
-  verticalGuidelines: [],
-  // 水平吸附线
-  horizontalGuidelines: [],
-  snapThreshold: 4,
-  isDisplaySnapDigit: true,
-  snapGap: false,
-  snapElement: true,
-  snapVertical: true,
-  snapHorizontal: true,
-  snapCenter: true,
-  snapDigit: 0,
-  triggerAblesSimultaneously: true,
-};
-const moveableOptions: any = reactive(cloneDeep(defaultConfig));
+const moveableStore = useMoveableStore();
+const { moveableOptions } = storeToRefs(moveableStore);
 const moveableRef = ref<InstanceType<typeof Moveable>>();
 const widgetMoveable = useWidgetMoveable();
+
+watch(
+  () => moveableRef.value,
+  () => {
+    if (moveableRef.value) {
+      moveableStore.moveableRef = moveableRef.value;
+    }
+  },
+);
 
 const selectoShow = ref(false);
 const selectoOption = reactive<Partial<VueSelecto>>({
@@ -114,64 +74,82 @@ const selectoOption = reactive<Partial<VueSelecto>>({
 
 const onSelect = (e: any) => {
   e.added.forEach((el: any) => {
-    if (selectedWidgets.value[0] === pageUUid) {
-      selectedWidgets.value.splice(0, 1, el.id);
-      // canvasStore.setCanvasData({
-      //   selectedWidgets: selectedWidgets.value,
-      // });
-    } else {
+    if (selectedWidgetUUIDList.value[0] === pageUUid) {
+      selectedWidgetUUIDList.value.splice(0, 1, el.id);
       canvasStore.setCanvasData({
-        selectedWidgets: selectedWidgets.value.concat([el.id]),
+        selectedWidgetUUIDList: selectedWidgetUUIDList.value.concat([el.id]),
       });
     }
   });
   e.removed.forEach((el: any) => {
-    const index = selectedWidgets.value.findIndex((item) => item === el.id);
-    if (selectedWidgets.value.length === 1) {
-      selectedWidgets.value.splice(index, 1, pageUUid);
+    const index = selectedWidgetUUIDList.value.findIndex(
+      (item) => item === el.id,
+    );
+    if (selectedWidgetUUIDList.value.length === 1) {
+      selectedWidgetUUIDList.value.splice(index, 1, pageUUid);
     } else {
-      selectedWidgets.value.splice(index, 1);
+      selectedWidgetUUIDList.value.splice(index, 1);
     }
-
-    // canvasStore.setCanvasData({
-    //   selectedWidgets: selectedWidgets.value,
-    // });
   });
+};
+
+const moveableEvent = <T extends keyof MoveableEvent>(
+  eventName: T,
+  event: MoveableEvent[T],
+) => {
+  const widget = canvasStore.selectedWidgetList[0];
+  widgetMoveable[widget.type]?.[eventName]?.(event);
+};
+const throttleMoveableEvent = throttle(moveableEvent, 200, { trailing: false });
+
+const onDragStart = (event: OnDragStart) => {
+  moveableEvent("onDragStart", event);
 };
 
 /**
  * 处理元素的拖拽事件
  * @param {OnDrag} obj - 包含事件对象、目标元素和转换信息的对象
  */
-const onDrag = ({ inputEvent, target, transform }: OnDrag) => {
+const onDrag = (event: OnDrag) => {
+  const { inputEvent, target, transform } = event;
   inputEvent.stopPropagation();
   inputEvent.preventDefault();
   target.style.transform = getMatrix3dTransform(transform);
+  throttleMoveableEvent("onDrag", event);
 };
 
-const onDragEnd = async ({ target, inputEvent, lastEvent }: OnDragEnd) => {
+const onDragEnd = async (event: OnDragEnd) => {
+  const { inputEvent, lastEvent } = event;
   if (!lastEvent) return;
-  console.log("target:", target);
   inputEvent.stopPropagation();
   inputEvent.preventDefault();
-  console.log("lastEvent:", lastEvent);
   const widgetIndex = canvasStore.selectedWidgetIndex[0];
   const bounds = widgetList.value[widgetIndex].bounds;
   canvasStore.setWidgetData([
     {
-      uuid: selectedWidgets.value[0],
+      uuid: selectedWidgetUUIDList.value[0],
       bounds: {
         x: bounds.x + lastEvent.left,
         y: bounds.y + lastEvent.top,
       },
     },
   ]);
+  moveableEvent("onDragEnd", event);
 };
-const onRotate = (e: any) => {
-  const { inputEvent, target, left, top } = e;
-  target!.style.transform = e.transform;
+
+const onRotateStart = (event: OnRotateStart) => {
+  moveableEvent("onRotateStart", event);
 };
-const onRotateEnd = async ({ inputEvent, lastEvent }: any) => {
+
+const onRotate = (event: OnRotate) => {
+  const { target } = event;
+  target!.style.transform = event.transform;
+  throttleMoveableEvent("onRotate", event);
+};
+
+const onRotateEnd = async (event: OnRotateEnd) => {
+  const { inputEvent, lastEvent } = event;
+  if (!lastEvent) return;
   inputEvent.stopPropagation();
   inputEvent.preventDefault();
   console.log("lastEvent:", lastEvent);
@@ -179,48 +157,49 @@ const onRotateEnd = async ({ inputEvent, lastEvent }: any) => {
   const transform = widgetList.value[widgetIndex].transform;
   canvasStore.setWidgetData([
     {
-      uuid: selectedWidgets.value[0],
+      uuid: selectedWidgetUUIDList.value[0],
       transform: {
         rotate: transform.rotate + lastEvent.rotate,
       },
     },
   ]);
+  moveableEvent("onRotateEnd", event);
 };
 
-const onResizeStart = (e: OnResizeStart) => {
-  const widgetIndex = canvasStore.selectedWidgetIndex[0];
-  const type = widgetList.value[widgetIndex].type;
-  widgetMoveable[type]?.onResizeStart(moveableOptions, e);
+const onResizeStart = (event: OnResizeStart) => {
+  moveableEvent("onResizeStart", event);
 };
-const onResize = (e: any) => {
-  const { inputEvent, target, width, height } = e;
-  // console.log(e);
-  target!.style.transform = e.transform;
+
+const onResize = (event: OnResize) => {
+  const { transform, target, width, height } = event;
+  target!.style.transform = transform;
   target!.style.width = `${width}px`;
   target!.style.height = `${height}px`;
+  throttleMoveableEvent("onResize", event);
 };
-const onResizeEnd = ({ inputEvent, lastEvent }: any) => {
-  console.log("lastEvent:", lastEvent);
+
+const onResizeEnd = (event: OnResizeEnd) => {
+  const { lastEvent } = event;
+  if (!lastEvent) return;
   const widgetIndex = canvasStore.selectedWidgetIndex[0];
   const bounds = widgetList.value[widgetIndex].bounds;
   canvasStore.setWidgetData([
     {
-      uuid: selectedWidgets.value[0],
+      uuid: selectedWidgetUUIDList.value[0],
       bounds: {
         width: lastEvent.width,
         height: lastEvent.height,
-        x: bounds.x + lastEvent.left,
-        y: bounds.y + lastEvent.top,
+        x: bounds.x + lastEvent.drag.translate[0],
+        y: bounds.y + lastEvent.drag.translate[1],
       },
     },
   ]);
+  moveableEvent("onResizeEnd", event);
 };
 
 const canvasStore = useCanvasStore();
 const { canvasData, selectedWidgetList } = storeToRefs(canvasStore);
-const { selectedWidgets, widgetList, widgetIndexMap } = toRefs(
-  canvasData.value,
-);
+const { selectedWidgetUUIDList, widgetList } = toRefs(canvasData.value);
 watch(
   () => selectedWidgetList.value,
   (value) => {
@@ -229,42 +208,28 @@ watch(
       const currentWidget = value[0];
       const widgetType = currentWidget.type;
       const widgetMoveableOptions = widgetMoveable[widgetType].options;
-      moveableOptions.target = document.getElementById(currentWidget.uuid);
-      Object.assign(moveableOptions, widgetMoveableOptions);
-      if (currentWidget.type === WidgetType.WPage) {
-        moveableOptions.draggable = false;
-      } else {
-        if (canvasStore.activeMouseEvent) {
-          const tempActiveMouseEvent = canvasStore.activeMouseEvent;
-          nextTick(() => {
-            moveableRef.value?.dragStart(tempActiveMouseEvent);
-          });
-        }
-      }
-    } else if (value.length > 1) {
-      const selectedWidgets = value.map(
-        (item) => widgetList.value[widgetIndexMap.value[item]],
+      moveableOptions.value.target = document.getElementById(
+        currentWidget.uuid,
       );
-      const widgetMoveableOptions =
-        widgetMoveable[selectedWidgets[0].type].options;
-      moveableOptions.renderDirections = widgetMoveableOptions.renderDirections;
-      moveableOptions.target =
-        value.length === 1
-          ? document.getElementById(value[0])
-          : value.map((item) => document.getElementById(item));
-      moveableOptions.rotatable = widgetMoveableOptions.rotatable;
-      if (selectedWidgets[0].type === WidgetType.WPage) {
-        moveableOptions.draggable = false;
+      Object.assign(moveableOptions.value, widgetMoveableOptions);
+      if (currentWidget.type === WidgetType.WPage) {
+        moveableOptions.value.draggable = false;
       } else {
-        moveableOptions.draggable = true;
         if (canvasStore.activeMouseEvent) {
           const tempActiveMouseEvent = canvasStore.activeMouseEvent;
-          console.log("tempActiveMouseEvent:", tempActiveMouseEvent);
           nextTick(() => {
             moveableRef.value?.dragStart(tempActiveMouseEvent);
           });
         }
       }
+      console.log("选择");
+    } else if (value.length > 1) {
+      // 多选
+      const widgetMoveableOptions = widgetMoveable["WMultipleSelect"].options;
+      Object.assign(moveableOptions.value, widgetMoveableOptions);
+      moveableOptions.value.target = value.map((item) =>
+        document.getElementById(item.uuid),
+      );
     }
   },
   { deep: true },
@@ -281,6 +246,7 @@ watch(
       selectoShow.value = true;
     }
   },
+  { immediate: true },
 );
 </script>
 <style lang="scss" scoped></style>

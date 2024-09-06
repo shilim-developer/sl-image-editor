@@ -8,7 +8,7 @@ export interface CanvasData {
   designName: string;
   widgetList: [WPageType, ...CommonWidgetType[]];
   widgetIndexMap: { [key: string]: number };
-  selectedWidgets: string[];
+  selectedWidgetUUIDList: string[];
 }
 
 export const blankCanvasData: CanvasData = {
@@ -34,5 +34,5 @@ export const blankCanvasData: CanvasData = {
     },
   ],
   widgetIndexMap: { "-1": 0 },
-  selectedWidgets: ["-1"],
+  selectedWidgetUUIDList: ["-1"],
 };

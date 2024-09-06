@@ -26,24 +26,27 @@ export const useCanvasStore = defineStore("canvasStore", {
     },
     selectedWidgetIndex() {
       const canvasListStore = useCanvasListStore();
-      return canvasListStore.currentCanvas.selectedWidgets.map(
+      return canvasListStore.currentCanvas.selectedWidgetUUIDList.map(
         (item) => canvasListStore.currentCanvas.widgetIndexMap[item],
       );
     },
     selectedWidgetList() {
+      this.selectedWidgetIndex;
       const canvasListStore = useCanvasListStore();
       const currentCanvas = canvasListStore.currentCanvas;
-      return currentCanvas.selectedWidgets.map(
+      return currentCanvas.selectedWidgetUUIDList.map(
         (item) => currentCanvas.widgetList[currentCanvas.widgetIndexMap[item]],
       );
     },
     widgetSettingList() {
       const canvasListStore = useCanvasListStore();
       const currentCanvas = canvasListStore.currentCanvas;
-      if (currentCanvas.selectedWidgets.length === 1) {
+      if (currentCanvas.selectedWidgetUUIDList.length === 1) {
         return [
           currentCanvas.widgetList[
-            currentCanvas.widgetIndexMap[currentCanvas.selectedWidgets[0]]
+            currentCanvas.widgetIndexMap[
+              currentCanvas.selectedWidgetUUIDList[0]
+            ]
           ].type + "-setting",
         ];
       } else {
@@ -74,10 +77,11 @@ export const useCanvasStore = defineStore("canvasStore", {
      */
     initWidgetIndexMap() {
       const canvasListStore = useCanvasListStore();
-      canvasListStore.currentCanvas.widgetIndexMap = {};
+      const newIndexMap: { [key: string]: number } = {};
       canvasListStore.currentCanvas.widgetList.forEach((item, index) => {
-        canvasListStore.currentCanvas.widgetIndexMap[item.uuid] = index;
+        newIndexMap[item.uuid] = index;
       });
+      canvasListStore.currentCanvas.widgetIndexMap = newIndexMap;
     },
     /**
      * 设置当前选中的画布数据
@@ -119,7 +123,7 @@ export const useCanvasStore = defineStore("canvasStore", {
      */
     selectWidget(uuid: string) {
       const canvasListStore = useCanvasListStore();
-      deepAssign(canvasListStore.currentCanvas.selectedWidgets, [uuid]);
+      deepAssign(canvasListStore.currentCanvas.selectedWidgetUUIDList, [uuid]);
     },
   },
 });

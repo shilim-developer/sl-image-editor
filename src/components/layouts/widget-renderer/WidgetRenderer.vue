@@ -118,13 +118,14 @@ function handleMouseDown(event: MouseEvent) {
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
     if (element.id && element.className.includes("widget")) {
+      console.log("elements:", i);
       if (element.id !== pageUUid) {
         canvasStore.setState({
           activeMouseEvent: event,
         });
       }
       canvasStore.setCanvasData({
-        selectedWidgets: [element.id],
+        selectedWidgetUUIDList: [element.id],
       });
       break;
     }
