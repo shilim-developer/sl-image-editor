@@ -124,9 +124,16 @@ function handleMouseDown(event: MouseEvent) {
           activeMouseEvent: event,
         });
       }
-      canvasStore.setCanvasData({
-        selectedWidgetUUIDList: [element.id],
-      });
+      const selectedWidgetUUIDList =
+        canvasStore.canvasData.selectedWidgetUUIDList;
+      if (
+        selectedWidgetUUIDList.length > 1 ||
+        (selectedWidgetUUIDList.length === 1 &&
+          canvasStore.canvasData.selectedWidgetUUIDList[0] !== element.id)
+      )
+        canvasStore.setCanvasData({
+          selectedWidgetUUIDList: [element.id],
+        });
       break;
     }
   }

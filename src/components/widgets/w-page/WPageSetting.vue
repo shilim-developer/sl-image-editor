@@ -16,6 +16,7 @@
       <div class="p-l-3 p-r-3">
         <n-flex justify="space-between">
           <n-input-number
+            :value="inputForm?.bounds.width"
             class="w-47%"
             placeholder=""
             size="small"
@@ -26,6 +27,7 @@
             </template>
           </n-input-number>
           <n-input-number
+            :value="inputForm?.bounds.height"
             class="w-47%"
             placeholder=""
             size="small"
@@ -47,20 +49,21 @@
           type="segment"
           animated
           size="small"
-          v-model="widgetSetting.background.type"
+          v-model="inputForm.background.type"
         >
           <n-tab-pane name="color" tab="颜色">
+            {{ inputForm.background.backgroundColor }}
             <n-popover trigger="click">
               <template #trigger>
                 <div
                   class="w-100% h-100px box-border border-1px border-solid border-gray-2 border-rd-1 cursor-pointer"
                   :style="{
-                    background: widgetSetting.background.backgroundColor,
+                    background: inputForm.background.backgroundColor,
                   }"
                 ></div>
               </template>
               <Vue3ColorPicker
-                :model-value="widgetSetting.background.backgroundColor"
+                :model-value="inputForm.background.backgroundColor"
                 @update:model-value="colorChange"
                 :mode="mode"
                 :showInputMenu="false"
@@ -98,18 +101,18 @@ import { getColorModeFromStr } from "@/utils/utils";
 import { WidgetType } from "../types/common";
 
 const canvasStore = useCanvasStore();
-const widgetSetting = ref<WPageType>(
-  cloneDeep(canvasStore.selectedWidgetList[0] as WPageType)
+const inputForm = ref<WPageType>(
+  cloneDeep(canvasStore.selectedWidgetList[0] as WPageType),
 );
 const mode = computed(() =>
-  getColorModeFromStr(widgetSetting.value.background.backgroundColor || "")
+  getColorModeFromStr(inputForm.value.background.backgroundColor || ""),
 );
 
 function colorChange(value: string) {
-  widgetSetting.value.background.backgroundColor = value;
+  inputForm.value.background.backgroundColor = value;
   canvasStore.setWidgetData<WidgetType.WPage>([
     {
-      uuid: widgetSetting.value.uuid,
+      uuid: inputForm.value.uuid,
       background: {
         backgroundColor: value,
         colorType: mode.value,

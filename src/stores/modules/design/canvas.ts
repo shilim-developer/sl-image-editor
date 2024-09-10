@@ -2,12 +2,15 @@ import { defineStore } from "pinia";
 import { useCanvasListStore } from "./canvas-list";
 import {
   CommonWidgetType,
+  WidgetType,
   WidgetTypeMap,
 } from "@/components/widgets/types/common";
 import { deepAssign } from "@/utils/utils";
 import { WPageType } from "@/components/widgets/w-page/w-page-type";
 import { CanvasState, PowerPartial } from "./design-type";
 import { CanvasData } from "@/components/tools/canvas-list/canvas-type";
+import { fabric } from "fabric";
+import { WImageType } from "@/components/widgets/w-image/w-image-type";
 
 export const useCanvasStore = defineStore("canvasStore", {
   state: (): CanvasState => ({
@@ -124,6 +127,47 @@ export const useCanvasStore = defineStore("canvasStore", {
     selectWidget(uuid: string) {
       const canvasListStore = useCanvasListStore();
       deepAssign(canvasListStore.currentCanvas.selectedWidgetUUIDList, [uuid]);
+    },
+    async exportImg() {
+      const canvas = new fabric.Canvas(null);
+      await Promise.all(
+        this.canvasData.widgetList.map((item) => {
+          if (item.type === WidgetType.WPage) {
+            canvas.backgroundColor = item.background.backgroundColor;
+            canvas.setWidth(item.bounds.width);
+            canvas.setHeight(item.bounds.height);
+            return Promise.resolve();
+          } else if (item.type === WidgetType.WImage) {
+            const data = item as WImageType;
+            console.log("data:", data);
+            return new Promise((resolve) => {
+              fabric.Image.fromURL(
+                data.url,
+                (img) => {
+                  img.scaleX = data.bounds.width / data.origin.width;
+                  img.scaleY = data.bounds.height / data.origin.height;
+                  img.left = data.bounds.x;
+                  img.top = data.bounds.y;
+                  canvas.add(img);
+                  resolve(true);
+                },
+                {
+                  crossOrigin: "anonymous",
+                },
+              );
+            });
+          }
+          return Promise.resolve();
+        }),
+      );
+      canvas.renderAll();
+      nextTick(() => {
+        canvas.getElement().toBlob((blob) => {
+          if (blob) {
+            window.open(window.URL.createObjectURL(blob));
+          }
+        });
+      });
     },
   },
 });

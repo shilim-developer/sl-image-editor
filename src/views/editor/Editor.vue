@@ -2,6 +2,7 @@
   <n-layout style="height: 360px">
     <n-layout-header style="height: 64px; padding: 24px" bordered>
       SL-IMAGE-EDITOR
+      <n-button @click="exportImg">导出</n-button>
     </n-layout-header>
     <n-layout position="absolute" style="top: 64px; bottom: 30px" has-sider>
       <n-tabs
@@ -178,14 +179,19 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       height: 800,
       x: 0,
       y: 0,
-      rotate: 0,
-      flipX: 1,
-      flipY: 1,
-      scale: 1,
     },
     background: {
       type: "color",
+      backgroundColor: "#ffffff",
     },
+    transform: {
+      rotate: 0,
+      scale: 0,
+      flipX: 1,
+      flipY: 1,
+    },
+    opacity: 0,
+    lock: false,
   },
   {
     type: WidgetType.WImage,
@@ -229,7 +235,7 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       y: 0,
     },
   },
-  ...Array.from({ length: 200 }).map(() => ({
+  ...Array.from({ length: 500 }).map(() => ({
     type: WidgetType.WImage,
     uuid: getUUID(),
     parent: "-1",
@@ -261,7 +267,6 @@ const containerSize = reactive({
 });
 const containerLeft = ref(0);
 function onContentResize() {
-  if (containerLeft.value === 365) return;
   containerSize.width = contentRef.value.$el.clientWidth;
   containerSize.height = contentRef.value.$el.clientHeight;
   containerLeft.value = contentRef.value.$el.offsetLeft;
@@ -280,6 +285,10 @@ onMounted(() => {
   });
   // getImageListApi();
 });
+
+const exportImg = () => {
+  canvasStore.exportImg();
+};
 </script>
 <style lang="less" scoped>
 a {

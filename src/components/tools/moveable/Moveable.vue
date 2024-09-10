@@ -100,7 +100,7 @@ const moveableEvent = <T extends keyof MoveableEvent>(
   const widget = canvasStore.selectedWidgetList[0];
   widgetMoveable[widget.type]?.[eventName]?.(event);
 };
-const throttleMoveableEvent = throttle(moveableEvent, 200, { trailing: false });
+const throttleMoveableEvent = throttle(moveableEvent, 100, { trailing: false });
 
 const onDragStart = (event: OnDragStart) => {
   moveableEvent("onDragStart", event);
@@ -115,7 +115,7 @@ const onDrag = (event: OnDrag) => {
   inputEvent.stopPropagation();
   inputEvent.preventDefault();
   target.style.transform = getMatrix3dTransform(transform);
-  throttleMoveableEvent("onDrag", event);
+  moveableEvent("onDrag", event);
 };
 
 const onDragEnd = async (event: OnDragEnd) => {

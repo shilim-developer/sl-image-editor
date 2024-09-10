@@ -1,5 +1,5 @@
 <template>
-  <n-collapse class="mt-16px" :default-expanded-names="[1, 2, 3]">
+  <n-collapse class="mt-16px" :default-expanded-names="[1, 2, 3, 4]">
     <template #header-extra="{ collapsed }">
       <div class="mr-4">
         <ChevronDown class="w-12px h-12px" v-if="collapsed" />
@@ -85,92 +85,98 @@
         </n-flex>
       </div>
     </n-collapse-item>
+    <n-collapse-item :name="4">
+      <template #header>
+        <div class="font-bold">图片操作</div>
+      </template>
+      <div class="p-l-3 p-r-3">
+        <n-button strong secondary class="w-100%"> 替换图片 </n-button>
+        <n-grid :x-gap="8" :y-gap="8" :cols="4" class="mt-4">
+          <n-grid-item>
+            <n-flex vertical :align="'center'">
+              <n-dropdown trigger="hover" :options="layerOptions">
+                <n-button tertiary class="h-auto pt-3.5 pb-3.5">
+                  <n-icon class="w-100%" :size="18">
+                    <Crop20Filled />
+                  </n-icon>
+                </n-button>
+              </n-dropdown>
+              <span class="font-size-13">裁剪</span>
+            </n-flex>
+          </n-grid-item>
+          <n-grid-item>
+            <n-flex vertical :align="'center'">
+              <n-dropdown trigger="hover" :options="flipOptions">
+                <n-button tertiary class="h-auto pt-3.5 pb-3.5">
+                  <n-icon class="w-100%" :size="18">
+                    <PaintBucket16Regular />
+                  </n-icon>
+                </n-button>
+              </n-dropdown>
+              <span class="font-size-13">调色</span>
+            </n-flex>
+          </n-grid-item>
+          <n-grid-item>
+            <n-flex vertical :align="'center'">
+              <n-dropdown trigger="hover" :options="alignOptions">
+                <n-button tertiary class="h-auto pt-3.5 pb-3.5">
+                  <n-icon class="w-100%" :size="18">
+                    <CameraEdit20Regular />
+                  </n-icon>
+                </n-button>
+              </n-dropdown>
+              <span class="font-size-13">滤镜</span>
+            </n-flex>
+          </n-grid-item>
+        </n-grid>
+      </div>
+    </n-collapse-item>
+    <n-collapse-item :name="3">
+      <template #header>
+        <div class="font-bold">快捷操作</div>
+      </template>
+      <div class="p-l-3 p-r-3">
+        <n-grid :x-gap="8" :y-gap="8" :cols="4">
+          <n-grid-item>
+            <n-flex vertical :align="'center'">
+              <n-dropdown trigger="hover" :options="layerOptions">
+                <n-button tertiary class="h-auto pt-3.5 pb-3.5">
+                  <n-icon class="w-100%" :size="18">
+                    <LayersOutline />
+                  </n-icon>
+                </n-button>
+              </n-dropdown>
+              <span class="font-size-13">图层顺序</span>
+            </n-flex>
+          </n-grid-item>
+          <n-grid-item>
+            <n-flex vertical :align="'center'">
+              <n-dropdown trigger="hover" :options="flipOptions">
+                <n-button tertiary class="h-auto pt-3.5 pb-3.5">
+                  <n-icon class="w-100%" :size="18">
+                    <FlipHorizontal16Filled />
+                  </n-icon>
+                </n-button>
+              </n-dropdown>
+              <span class="font-size-13">翻转</span>
+            </n-flex>
+          </n-grid-item>
+          <n-grid-item>
+            <n-flex vertical :align="'center'">
+              <n-dropdown trigger="hover" :options="alignOptions">
+                <n-button tertiary class="h-auto pt-3.5 pb-3.5">
+                  <n-icon class="w-100%" :size="18">
+                    <AlignCenterHorizontal20Filled />
+                  </n-icon>
+                </n-button>
+              </n-dropdown>
+              <span class="font-size-13">对齐</span>
+            </n-flex>
+          </n-grid-item>
+        </n-grid>
+      </div>
+    </n-collapse-item>
   </n-collapse>
-  <div class="p-3">
-    <n-tabs justify-content="space-evenly" type="line" trigger="hover">
-      <n-tab-pane name="oasis">
-        <template #tab>
-          <n-icon class="w-100%" :size="16"><LayersOutline /></n-icon>
-        </template>
-        <n-flex justify="space-between">
-          <n-button size="small" class="flex-1">上移一层</n-button>
-          <n-button size="small" class="flex-1">下移一层</n-button>
-          <n-button size="small" class="flex-1">移动到顶层</n-button>
-          <n-button size="small" class="flex-1">移动到底层</n-button>
-        </n-flex>
-      </n-tab-pane>
-      <n-tab-pane name="the beatles">
-        <template #tab>
-          <n-icon class="w-100%" :size="16"><FlipHorizontal16Filled /></n-icon>
-        </template>
-        <n-flex justify="space-between">
-          <n-button
-            size="small"
-            class="flex-1"
-            @click="
-              changeWidgetData('transform.flipX', -inputForm.transform.flipX)
-            "
-          >
-            水平翻转
-          </n-button>
-          <n-button
-            size="small"
-            class="flex-1"
-            @click="
-              changeWidgetData('transform.flipY', -inputForm.transform.flipY)
-            "
-          >
-            垂直翻转
-          </n-button>
-        </n-flex>
-      </n-tab-pane>
-      <n-tab-pane name="jay chou">
-        <template #tab>
-          <n-icon class="w-100%" :size="16">
-            <AlignCenterHorizontal20Filled />
-          </n-icon>
-        </template>
-        <n-flex justify="space-between" :wrap="false">
-          <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button> 鸭子 </n-button>
-            </template>
-            如果它长得像鸭子，走起来像鸭子，叫起来也像鸭子，那它一定是个鸭子。
-          </n-tooltip>
-          <n-button size="small" class="flex-1 p-l-1 p-r-1">
-            <n-icon class="w-100%" :size="16">
-              <AlignStartHorizontal20Filled />
-            </n-icon>
-          </n-button>
-          <n-button size="small" class="flex-1 p-l-1 p-r-1">
-            <n-icon class="w-100%" :size="16">
-              <AlignEndHorizontal20Filled />
-            </n-icon>
-          </n-button>
-          <n-button size="small" class="flex-1 p-l-1 p-r-1">
-            <n-icon class="w-100%" :size="16">
-              <AlignStartVertical20Filled />
-            </n-icon>
-          </n-button>
-          <n-button size="small" class="flex-1 p-l-1 p-r-1">
-            <n-icon class="w-100%" :size="16">
-              <AlignEndVertical20Filled />
-            </n-icon>
-          </n-button>
-          <n-button size="small" class="flex-1 p-l-1 p-r-1">
-            <n-icon class="w-100%" :size="16">
-              <AlignCenterHorizontal16Filled />
-            </n-icon>
-          </n-button>
-          <n-button size="small" class="flex-1 p-l-1 p-r-1">
-            <n-icon class="w-100%" :size="16">
-              <AlignCenterVertical16Filled />
-            </n-icon>
-          </n-button>
-        </n-flex>
-      </n-tab-pane>
-    </n-tabs>
-  </div>
 </template>
 <script lang="ts" setup>
 import { useCanvasStore } from "@/stores/modules/design/canvas";
@@ -183,18 +189,13 @@ import {
 import {
   FlipHorizontal16Filled,
   AlignCenterHorizontal20Filled,
-  AlignStartHorizontal20Filled,
-  AlignEndHorizontal20Filled,
-  AlignStartVertical20Filled,
-  AlignEndVertical20Filled,
-  AlignCenterHorizontal16Filled,
-  AlignCenterVertical16Filled,
+  Crop20Filled,
+  PaintBucket16Regular,
+  CameraEdit20Regular,
 } from "@vicons/fluent";
 import { cloneDeep } from "lodash";
 import { WImageType } from "./w-image-type";
 import { deepAssign, expression2Object } from "@/utils/utils";
-import { useMoveableEvent } from "@/components/tools/moveable/use-movaeable-event";
-import { WidgetBounds } from "../types/common";
 import { useWImageEvent } from "./w-image-event";
 
 const canvasStore = useCanvasStore();
@@ -217,28 +218,65 @@ useWImageEvent("CHANGE_INPUT_FORM", (event) => {
   deepAssign(inputForm.value, event);
 });
 
-let tempBounds: WidgetBounds;
-useMoveableEvent("ON_DRAG_START", () => {
-  tempBounds = cloneDeep(inputForm.value.bounds);
-});
+const layerOptions = ref([
+  {
+    label: "移动到顶层",
+    key: "atlantis nahamas, nassau",
+  },
+  {
+    label: "上移一层",
+    key: "marina bay sands",
+  },
+  {
+    label: "下移一层",
+    key: "brown's hotel, london",
+  },
+  {
+    label: "移动到底层",
+    key: "the beverly hills hotel, los angeles",
+  },
+]);
 
-useMoveableEvent("ON_DRAG", (event) => {
-  const { left, top } = event;
-  console.log("ON_RESIZE:", event);
-  inputForm.value.bounds.x = tempBounds.x + left;
-  inputForm.value.bounds.y = tempBounds.y + top;
-});
+const flipOptions = ref([
+  {
+    label: "水平翻转",
+    key: "atlantis nahamas, nassau",
+  },
+  {
+    label: "垂直翻转",
+    key: "marina bay sands",
+  },
+]);
 
-useMoveableEvent("ON_RESIZE_START", () => {
-  tempBounds = cloneDeep(inputForm.value.bounds);
-});
-
-useMoveableEvent("ON_RESIZE", (event) => {
-  const { width, height, drag } = event;
-  inputForm.value.bounds.width = width;
-  inputForm.value.bounds.height = height;
-  inputForm.value.bounds.x = tempBounds.x + drag.translate[0];
-  inputForm.value.bounds.y = tempBounds.y + drag.translate[1];
-});
+const alignOptions = ref([
+  {
+    label: "居上对齐",
+    key: "atlantis nahamas, nassau",
+  },
+  {
+    label: "居左对齐",
+    key: "marina bay sands",
+  },
+  {
+    label: "居右对齐",
+    key: "brown's hotel, london",
+  },
+  {
+    label: "居下对齐",
+    key: "the beverly hills hotel, los angeles",
+  },
+  {
+    label: "居中对齐",
+    key: "brown's hotel, london",
+  },
+  {
+    label: "水平居中对齐",
+    key: "brown's hotel, london",
+  },
+  {
+    label: "垂直居中对齐",
+    key: "the beverly hills hotel, los angeles",
+  },
+]);
 </script>
 <style lang="scss" scoped></style>
