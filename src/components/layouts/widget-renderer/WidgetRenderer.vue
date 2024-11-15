@@ -42,6 +42,7 @@ import { getScaleInfo } from "@/utils/utils";
 import { pageUUid } from "@/components/widgets/w-page/w-page-utils";
 import { useResizeStore } from "@/stores/modules/design/resize";
 import { storeToRefs } from "pinia";
+import Ruler from "@scena/ruler";
 
 type PropsType = {
   containerSize: { width: number; height: number };
@@ -145,6 +146,10 @@ function handleMouseUp() {
 }
 
 onMounted(() => {
+  const ruler = new Ruler(document.querySelector(".ruler.horizontal"), {
+    type: "horizontal",
+    zoom: 0.82,
+  });
   watch(
     () => props,
     () => {
@@ -172,6 +177,8 @@ onMounted(() => {
         currentScale: realScale,
       });
       countSize(realScale);
+
+      ruler.scroll(-pageBound.value.pageLeft / 0.82);
     },
     { immediate: true, deep: true },
   );

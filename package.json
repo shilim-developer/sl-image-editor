@@ -19,6 +19,9 @@
   },
   "dependencies": {
     "@cyhnkckali/vue3-color-picker": "^2.0.2",
+    "@daybrush/utils": "^1.13.0",
+    "@scena/ruler": "^0.20.0",
+    "@scena/vue-ruler": "^0.18.0",
     "@vicons/fluent": "^0.12.0",
     "@vicons/ionicons5": "^0.12.0",
     "@vueuse/components": "^10.11.0",
@@ -39,6 +42,8 @@
     "vue-hooks-plus": "^2.2.1",
     "vue-router": "^4.3.0",
     "vue3-color-picker-gradient": "^0.7.0",
+    "vue3-guides": "^0.12.2",
+    "vue3-infinite-viewer": "^0.17.1",
     "vue3-moveable": "^0.28.0",
     "vue3-selecto": "^1.12.3"
   },

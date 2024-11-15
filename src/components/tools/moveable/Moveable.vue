@@ -38,6 +38,7 @@ import { WidgetType } from "@/components/widgets/types/common";
 import { pageUUid } from "@/components/widgets/w-page/w-page-utils";
 import { MoveableEvent } from "./use-movaeable-event";
 import { useMoveableStore } from "@/stores/modules/design/moveable";
+import { getEmitter } from "@/utils/mitt";
 
 const moveableStore = useMoveableStore();
 const { moveableOptions } = storeToRefs(moveableStore);
@@ -170,12 +171,14 @@ const onResizeStart = (event: OnResizeStart) => {
   moveableEvent("onResizeStart", event);
 };
 
+const emitter = getEmitter();
 const onResize = (event: OnResize) => {
   const { transform, target, width, height } = event;
   target!.style.transform = transform;
   target!.style.width = `${width}px`;
   target!.style.height = `${height}px`;
   throttleMoveableEvent("onResize", event);
+  emitter.emit("onResize", width - selectedWidgetList.value[0].bounds.width);
 };
 
 const onResizeEnd = (event: OnResizeEnd) => {
@@ -243,7 +246,7 @@ watch(
       selectoOption.container = value.containerRef;
       selectoOption.dragContainer = value.containerRef;
       selectoOption.keyContainer = value.containerRef;
-      selectoShow.value = true;
+      // selectoShow.value = true;
     }
   },
   { immediate: true },

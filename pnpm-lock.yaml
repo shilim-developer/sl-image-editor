@@ -11,6 +11,15 @@ importers:
       '@cyhnkckali/vue3-color-picker':
         specifier: ^2.0.2
         version: 2.0.2(vue@3.4.31(typescript@5.4.5))
+      '@daybrush/utils':
+        specifier: ^1.13.0
+        version: 1.13.0
+      '@scena/ruler':
+        specifier: ^0.20.0
+        version: 0.20.0
+      '@scena/vue-ruler':
+        specifier: ^0.18.0
+        version: 0.18.0
       '@vicons/fluent':
         specifier: ^0.12.0
         version: 0.12.0
@@ -71,6 +80,12 @@ importers:
       vue3-color-picker-gradient:
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.4.5)
+      vue3-guides:
+        specifier: ^0.12.2
+        version: 0.12.2
+      vue3-infinite-viewer:
+        specifier: ^0.17.1
+        version: 0.17.1
       vue3-moveable:
         specifier: ^0.28.0
         version: 0.28.0
@@ -898,8 +913,23 @@ packages:
   '@scena/event-emitter@1.0.5':
     resolution: {integrity: sha512-AzY4OTb0+7ynefmWFQ6hxDdk0CySAq/D4efljfhtRHCOP7MBF9zUfhKG3TJiroVjASqVgkRJFdenS8ArZo6Olg==}
 
+  '@scena/guides@0.29.2':
+    resolution: {integrity: sha512-gnXiB/Ji3ix/mGCgJiWz4k6U9OjEwcpdKUvmh3pYLXuL2x6DouCPAJ/PwnrYgaSMURhSyNkzp4WJdHqbAdYDXw==}
+
   '@scena/matrix@1.1.1':
     resolution: {integrity: sha512-JVKBhN0tm2Srl+Yt+Ywqu0oLgLcdemDQlD1OxmN9jaCTwaFPZ7tY8n6dhVgMEaR9qcR7r+kAlMXnSfNyYdE+Vg==}
+
+  '@scena/react-guides@0.28.2':
+    resolution: {integrity: sha512-3TylBDU32BPk/SARQdZ2dkwW0NbQA7D21XUMMdGm/RXxuMNg39oHrxQ/XjlkFOvRFDgc7gPDsDgi1Am8wRuu1Q==}
+
+  '@scena/react-ruler@0.19.0':
+    resolution: {integrity: sha512-2OEOjLMOptDxdSuEqID2JAljQuYoeoV09MnLjiBeyzJxoUcVjzyBCPwkMbHRKj2Z3WrwztJAFBF+y6yNNM5Lcw==}
+
+  '@scena/ruler@0.20.0':
+    resolution: {integrity: sha512-KVrIwU0EvNJK1833yX7Qg8h/DvSZ04S6aR012UtuWqLaD/+T80HfN5b4IEs0rtoJ26FvvfMigVnOAmyHqc1S6g==}
+
+  '@scena/vue-ruler@0.18.0':
+    resolution: {integrity: sha512-gB2eXdvNdfqTaarYN+LOr/dGBl6NM5lKeCdU+uiSGl13SuNfh9E4Sf5o8DUZT34bB5PRvXBNxyy1Wtt98K4rvQ==}
 
   '@sxzz/popperjs-es@2.11.7':
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
@@ -1496,10 +1526,16 @@ packages:
   croact-css-styled@1.1.9:
     resolution: {integrity: sha512-G7yvRiVJ3Eoj0ov2h2xR4312hpOzATay2dGS9clK8yJQothjH1sBXIyvOeRP5wBKD9mPcKcoUXPCPsl0tQog4w==}
 
+  croact-guides@0.26.2:
+    resolution: {integrity: sha512-Q2oRK8jo70mLC93Drce+dEozqgJdVjpbC6b0OxXVbvaXaZnamNH6UHeileuATcXLRbsgY49XfI/2H0mY82vwJQ==}
+
   croact-moveable@0.9.0:
     resolution: {integrity: sha512-fc3bieV6CdqqZFtzsSLi9KmvUMFW3oakUfhPCls1BxKjOfUfn8rktteGED2341A/Qghy8tI3Hm6SdocIc68IKg==}
     peerDependencies:
       croact: ^1.0.4
+
+  croact-ruler@0.18.0:
+    resolution: {integrity: sha512-FZtYH1n3Mpv7VX24y26lAMOVqem+/qRG4a7nBy9pwDeh9Q8UycOQqAdmWxNC1CNh1Pw1k4K28/gRQOyo4r1Zag==}
 
   croact@1.0.4:
     resolution: {integrity: sha512-9GhvyzTY/IVUrMQ2iz/mzgZ8+NcjczmIo/t4FkC1CU0CEcau6v6VsEih4jkTa4ZmRgYTF0qXEZLObCzdDFplpw==}
@@ -2054,6 +2090,9 @@ packages:
 
   import-meta-resolve@4.1.0:
     resolution: {integrity: sha512-I6fiaX09Xivtk+THaMfAwnA3MVA5Big1WHF1Dfx9hFuvNIWpXnorlkzhcQf6ehrqQiiZECRt1poOAkPmer3ruw==}
+
+  infinite-viewer@0.29.1:
+    resolution: {integrity: sha512-/ZWsJxgB5Atg/M3rb2HlYY33XrRkOcRIRlRTZoCWsORO/xvFSprm7gq2gB8DZvkjlkRnIOeR9TjZSLn8LFK19w==}
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -3338,6 +3377,12 @@ packages:
   vue3-color-picker-gradient@0.7.0:
     resolution: {integrity: sha512-Pu/UT33UUAgBWi7kapS6ZxYJFWYESea954tffjPPUwunmtAOt6nL+Nzkv58golb1C+k/9ylpZMMAxT76MTr3Cw==}
 
+  vue3-guides@0.12.2:
+    resolution: {integrity: sha512-6YPMMtxwD6Jb6BDvzqJ86lEpjw7l9AN57j2Gpq5DWQ1zJnExY2HxuQjRMY5H0bevUgLBF6A7KuC5bzxDbvQLQw==}
+
+  vue3-infinite-viewer@0.17.1:
+    resolution: {integrity: sha512-KghbYFXpZhrRT0aia12Xvl93TRrrQ2Fa/R1f4HkUm/MbgkXl6r45RT70HnRRC8R3pOD7oz99dwHjY8P5/SFJDA==}
+
   vue3-moveable@0.28.0:
     resolution: {integrity: sha512-vplQO0XkxVEtXMDh2/lZE+c5kMycGXAfYFMvbwFKi8UVYzVk8MTgVHr4fxO9Z+4i4Rb+U/IEIgkhHRMAbx8FJg==}
 
@@ -4172,9 +4217,39 @@ snapshots:
     dependencies:
       '@daybrush/utils': 1.13.0
 
+  '@scena/guides@0.29.2':
+    dependencies:
+      '@scena/event-emitter': 1.0.5
+      croact: 1.0.4
+      croact-guides: 0.26.2
+
   '@scena/matrix@1.1.1':
     dependencies:
       '@daybrush/utils': 1.13.0
+
+  '@scena/react-guides@0.28.2':
+    dependencies:
+      '@daybrush/utils': 1.13.0
+      '@scena/dragscroll': 1.4.0
+      '@scena/react-ruler': 0.19.0
+      css-to-mat: 1.1.1
+      framework-utils: 1.1.0
+      gesto: 1.19.4
+      react-css-styled: 1.1.9
+
+  '@scena/react-ruler@0.19.0':
+    dependencies:
+      '@daybrush/utils': 1.13.0
+      framework-utils: 1.1.0
+
+  '@scena/ruler@0.20.0':
+    dependencies:
+      croact: 1.0.4
+      croact-ruler: 0.18.0
+
+  '@scena/vue-ruler@0.18.0':
+    dependencies:
+      '@scena/ruler': 0.20.0
 
   '@sxzz/popperjs-es@2.11.7': {}
 
@@ -4926,6 +5001,18 @@ snapshots:
       css-styled: 1.0.8
       framework-utils: 1.1.0
 
+  croact-guides@0.26.2:
+    dependencies:
+      '@daybrush/utils': 1.13.0
+      '@scena/dragscroll': 1.4.0
+      '@scena/react-guides': 0.28.2
+      croact-css-styled: 1.1.9
+      croact-ruler: 0.18.0
+      css-to-mat: 1.1.1
+      framework-utils: 1.1.0
+      gesto: 1.19.4
+      react-css-styled: 1.1.9
+
   croact-moveable@0.9.0(croact@1.0.4):
     dependencies:
       '@daybrush/utils': 1.13.0
@@ -4943,6 +5030,10 @@ snapshots:
       overlap-area: 1.1.0
       react-css-styled: 1.1.9
       react-moveable: 0.56.0
+
+  croact-ruler@0.18.0:
+    dependencies:
+      '@scena/react-ruler': 0.19.0
 
   croact@1.0.4:
     dependencies:
@@ -5563,6 +5654,15 @@ snapshots:
       resolve-from: 4.0.0
 
   import-meta-resolve@4.1.0: {}
+
+  infinite-viewer@0.29.1:
+    dependencies:
+      '@daybrush/utils': 1.13.0
+      '@egjs/agent': 2.4.3
+      '@scena/event-emitter': 1.0.5
+      css-styled: 1.0.8
+      framework-utils: 1.1.0
+      gesto: 1.19.4
 
   inflight@1.0.6:
     dependencies:
@@ -6842,6 +6942,15 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - typescript
+
+  vue3-guides@0.12.2:
+    dependencies:
+      '@scena/guides': 0.29.2
+      framework-utils: 1.1.0
+
+  vue3-infinite-viewer@0.17.1:
+    dependencies:
+      infinite-viewer: 0.29.1
 
   vue3-moveable@0.28.0:
     dependencies:

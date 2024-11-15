@@ -101,7 +101,7 @@
       <n-layout-content
         ref="contentRef"
         :native-scrollbar="false"
-        :scrollbar-props="{ xScrollable: true }"
+        :scrollbar-props="{ xScrollable: false, scrollable: false }"
         v-element-size="onContentResize"
       >
         <widget-renderer
@@ -114,6 +114,7 @@
             left: 40,
           }"
         />
+        <div class="ruler horizontal"></div>
       </n-layout-content>
       <div
         class="flex-shrink-0 w-270px h-full b-t-0 b-r-0 b-b-0 b-l-1px b-solid border-gray-200 flex flex-col overflow-hidden"
@@ -166,6 +167,7 @@ import {
 import { vElementSize } from "@vueuse/components";
 import WidgetRenderer from "@/components/layouts/widget-renderer/WidgetRenderer.vue";
 import { getUUID } from "@/utils/utils";
+import { NLayoutContent } from "naive-ui";
 
 const canvasStore = useCanvasStore();
 
@@ -259,8 +261,8 @@ const data: [WPageType, ...CommonWidgetType[]] = [
 ];
 canvasStore.setWidgetList(data);
 canvasStore.initWidgetIndexMap();
-// canvasListStore.addCanvas();
 const contentRef = ref();
+// canvasListStore.addCanvas();
 const containerSize = reactive({
   width: 0,
   height: 0,
@@ -283,6 +285,7 @@ onMounted(() => {
   canvasStore.setState({
     widgetRendererRef: widgetRendererRef.value,
   });
+
   // getImageListApi();
 });
 
@@ -293,5 +296,16 @@ const exportImg = () => {
 <style lang="less" scoped>
 a {
   color: red;
+}
+
+.ruler {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.ruler.horizontal {
+  left: 0;
+  width: 100%;
+  height: 30px;
 }
 </style>
