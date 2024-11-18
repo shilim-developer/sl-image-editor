@@ -33,6 +33,11 @@
       :suit-scale="suitScale"
       @scale="handleScale"
     />
+    <ruler-tool
+      :left="pageBound.pageLeft"
+      :top="pageBound.pageTop"
+      :zoom="currentScale"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -42,7 +47,6 @@ import { getScaleInfo } from "@/utils/utils";
 import { pageUUid } from "@/components/widgets/w-page/w-page-utils";
 import { useResizeStore } from "@/stores/modules/design/resize";
 import { storeToRefs } from "pinia";
-import Ruler from "@scena/ruler";
 
 type PropsType = {
   containerSize: { width: number; height: number };
@@ -146,10 +150,6 @@ function handleMouseUp() {
 }
 
 onMounted(() => {
-  const ruler = new Ruler(document.querySelector(".ruler.horizontal"), {
-    type: "horizontal",
-    zoom: 0.82,
-  });
   watch(
     () => props,
     () => {
@@ -178,7 +178,7 @@ onMounted(() => {
       });
       countSize(realScale);
 
-      ruler.scroll(-pageBound.value.pageLeft / 0.82);
+      // ruler.scroll(-pageBound.value.pageLeft / 0.82);
     },
     { immediate: true, deep: true },
   );
