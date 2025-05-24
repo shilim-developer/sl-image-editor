@@ -6,6 +6,7 @@ import { createPinia } from "pinia";
 import { setupRouter } from "./router";
 import { installWidgets } from "@/components/widgets/install";
 import ColorPickerGradient from "vue3-color-picker-gradient";
+import "animate.css";
 
 const store = createPinia();
 

@@ -3,11 +3,9 @@ import { getDirection } from "@/components/tools/moveable/moveable-utils";
 import { useCanvasStore } from "@/stores/modules/design/canvas";
 import { OnDrag, OnResize, OnResizeStart } from "vue3-moveable";
 import { wImageEmitter } from "./w-image-event";
-import { useMoveableStore } from "@/components/tools/moveable/moveable-store";
 import { storeToRefs } from "pinia";
+import { useMoveableStore } from "@/stores/modules/design/moveable";
 
-const moveableStore = useMoveableStore();
-const { moveableOptions } = storeToRefs(moveableStore);
 export default {
   options: {
     isMultipleSelectable: true,
@@ -28,6 +26,8 @@ export default {
     });
   },
   onResizeStart(event: OnResizeStart) {
+    const moveableStore = useMoveableStore();
+    const { moveableOptions } = storeToRefs(moveableStore);
     const { direction } = event;
 
     const directionType = getDirection(direction);

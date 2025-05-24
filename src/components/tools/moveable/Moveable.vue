@@ -34,11 +34,32 @@ import { getMatrix3dTransform } from "@/utils/utils";
 import { useWidgetMoveable } from "@/components/widgets/use-widget-moveable";
 import { useCanvasStore } from "@/stores/modules/design/canvas";
 import { storeToRefs } from "pinia";
-import { WidgetType } from "@/components/widgets/types/common";
 import { pageUUid } from "@/components/widgets/w-page/w-page-utils";
 import { MoveableEvent } from "./use-movaeable-event";
 import { useMoveableStore } from "@/stores/modules/design/moveable";
 import { getEmitter } from "@/utils/mitt";
+
+const props = defineProps({
+  scrollContainer: {
+    type: Object,
+  },
+});
+
+watch(
+  () => props.scrollContainer,
+  (value) => {
+    // if (value) {
+    //   console.log(
+    //     "value:",
+    //     document.querySelector(".design-scroll").parentElement,
+    //   );
+    //   moveableOptions.value.container = document.querySelector(".design-scroll");
+    //   moveableOptions.value.scrollable = true;
+    //   moveableOptions.value.scrollContainer =
+    //     document.querySelector(".design-scroll").parentElement;
+    // }
+  },
+);
 
 const moveableStore = useMoveableStore();
 const { moveableOptions } = storeToRefs(moveableStore);
@@ -203,37 +224,14 @@ const onResizeEnd = (event: OnResizeEnd) => {
 const canvasStore = useCanvasStore();
 const { canvasData, selectedWidgetList } = storeToRefs(canvasStore);
 const { selectedWidgetUUIDList, widgetList } = toRefs(canvasData.value);
+console.log(selectedWidgetList.value);
+
 watch(
   () => selectedWidgetList.value,
   (value) => {
-    // 只选择一个
-    if (value.length === 1) {
-      const currentWidget = value[0];
-      const widgetType = currentWidget.type;
-      const widgetMoveableOptions = widgetMoveable[widgetType].options;
-      moveableOptions.value.target = document.getElementById(
-        currentWidget.uuid,
-      );
-      Object.assign(moveableOptions.value, widgetMoveableOptions);
-      if (currentWidget.type === WidgetType.WPage) {
-        moveableOptions.value.draggable = false;
-      } else {
-        if (canvasStore.activeMouseEvent) {
-          const tempActiveMouseEvent = canvasStore.activeMouseEvent;
-          nextTick(() => {
-            moveableRef.value?.dragStart(tempActiveMouseEvent);
-          });
-        }
-      }
-      console.log("选择");
-    } else if (value.length > 1) {
-      // 多选
-      const widgetMoveableOptions = widgetMoveable["WMultipleSelect"].options;
-      Object.assign(moveableOptions.value, widgetMoveableOptions);
-      moveableOptions.value.target = value.map((item) =>
-        document.getElementById(item.uuid),
-      );
-    }
+    console.log(moveableStore);
+
+    moveableStore.targetWidgetList(value);
   },
   { deep: true },
 );

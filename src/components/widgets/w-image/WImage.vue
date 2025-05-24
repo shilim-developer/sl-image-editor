@@ -14,7 +14,7 @@
 </template>
 <script lang="ts" setup>
 import { WImageType } from "./w-image-type";
-import { fabric } from "fabric";
+// import { fabric } from "fabric";
 import { useWidgetTransform } from "@/hooks/use-widget-transform";
 
 type PropsType = {
@@ -23,7 +23,7 @@ type PropsType = {
 
 const props = defineProps<PropsType>();
 const canvasRef = ref<HTMLCanvasElement>();
-let canvas: fabric.Canvas;
+// let canvas: fabric.Canvas;
 
 const transform = useWidgetTransform(props.widgetInfo);
 

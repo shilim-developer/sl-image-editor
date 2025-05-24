@@ -1,10 +1,10 @@
 <template>
   <div
     ref="canvasListRef"
-    class="position-fixed bottom-40px"
+    class="position-absolute bottom-10px"
     :style="{ width: `${width}px`, left: `${left}px` }"
   >
-    <n-button class="bg-white" @click="listShow = !listShow">
+    <n-button class="bg-white" @click="listShow = !listShow" size="small">
       <div class="d-flex">
         画板{{ canvasListStore.selectedCanvasIndex + 1 }}/{{
           canvasListStore.canvasList.length
@@ -41,7 +41,7 @@ withDefaults(
   {
     width: 0,
     left: 0,
-  }
+  },
 );
 
 const emit = defineEmits<{
@@ -51,6 +51,16 @@ const emit = defineEmits<{
 const canvasListStore = useCanvasListStore();
 const canvasListRef = ref();
 const listShow = ref(false);
+
+watch(
+  () => listShow.value,
+  () => {
+    nextTick(() => {
+      emit("heightChange", canvasListRef.value.clientHeight);
+    });
+  },
+);
+
 onMounted(() => {
   emit("heightChange", canvasListRef.value.clientHeight);
 });

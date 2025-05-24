@@ -55,4 +55,8 @@ export const defaultMoveableOptions: Partial<MoveableProperties> = {
   snapGap: false,
   snapDigit: 0,
   triggerAblesSimultaneously: true,
+  getScrollPosition: ({ scrollContainer }) => {
+    console.log(scrollContainer);
+    return [scrollContainer.scrollLeft, scrollContainer.scrollTop];
+  },
 };

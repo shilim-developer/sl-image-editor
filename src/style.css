@@ -15,5 +15,5 @@ body,
 }
 
 .n-scrollbar-rail--vertical {
-  right: -8px !important;
+  /* right: -8px !important; */
 }

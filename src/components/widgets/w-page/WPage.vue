@@ -13,6 +13,7 @@
 import { useWidgetTransform } from "@/hooks/use-widget-transform";
 import { CommonWidgetType } from "../types/common";
 import { WPageType } from "./w-page-type";
+import { useMoveableStore } from "@/stores/modules/design/moveable";
 
 type PropsType = {
   widgetInfo: WPageType;
@@ -21,5 +22,10 @@ type PropsType = {
 
 const props = defineProps<PropsType>();
 const transform = useWidgetTransform(props.widgetInfo);
+
+onMounted(() => {
+  const moveableStore = useMoveableStore();
+  moveableStore.targetWidgetList([props.widgetInfo]);
+});
 </script>
 <style lang="scss" scoped></style>

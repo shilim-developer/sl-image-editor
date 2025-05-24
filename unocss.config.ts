@@ -16,6 +16,10 @@ export default defineConfig({
       }),
     ],
   ],
+  shortcuts: [
+    [/^ph-\[?(.*?)\]?$/, ([, size]) => `pl-${size} pr-${size}`],
+    [/^pv-\[?(.*?)\]?$/, ([, size]) => `pt-${size} pb-${size}`],
+  ],
   presets: [presetMini(), presetUno(), presetAttributify()],
   transformers: [transformerDirectives(), transformerVariantGroup()],
 });

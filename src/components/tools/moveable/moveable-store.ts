@@ -13,5 +13,13 @@ export const useMoveableStore = defineStore("moveableStore", {
     moveableOptions: cloneDeep(defaultMoveableOptions),
     moveableRef: null,
   }),
-  actions: {},
+  actions: {
+    refreshRect() {
+      nextTick(() => {
+        if (this.moveableRef) {
+          this.moveableRef.updateRect();
+        }
+      });
+    },
+  },
 });

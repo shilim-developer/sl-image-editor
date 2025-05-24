@@ -1,6 +1,6 @@
 <template>
-  <div class="position-fixed right-40px bottom-40px z-10">
-    <n-button-group>
+  <div class="position-absolute right-20px bottom-10px z-10 bg-white">
+    <n-button-group size="small">
       <n-button @click="handleScale(1)">
         <template #icon>
           <n-icon><add /></n-icon>

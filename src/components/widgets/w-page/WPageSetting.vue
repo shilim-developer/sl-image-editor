@@ -97,8 +97,9 @@ import { cloneDeep } from "lodash";
 import { WPageType } from "./w-page-type";
 import { Vue3ColorPicker } from "@cyhnkckali/vue3-color-picker";
 import "@cyhnkckali/vue3-color-picker/dist/style.css";
-import { getColorModeFromStr } from "@/utils/utils";
+import { deepAssign, getColorModeFromStr } from "@/utils/utils";
 import { WidgetType } from "../types/common";
+import { useWPageEvent } from "./w-page-event";
 
 const canvasStore = useCanvasStore();
 const inputForm = ref<WPageType>(
@@ -120,5 +121,9 @@ function colorChange(value: string) {
     },
   ]);
 }
+
+useWPageEvent("CHANGE_INPUT_FORM", (event) => {
+  deepAssign(inputForm.value, event);
+});
 </script>
 <style lang="scss" scoped></style>

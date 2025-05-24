@@ -9,7 +9,7 @@ import { deepAssign } from "@/utils/utils";
 import { WPageType } from "@/components/widgets/w-page/w-page-type";
 import { CanvasState, PowerPartial } from "./design-type";
 import { CanvasData } from "@/components/tools/canvas-list/canvas-type";
-import { fabric } from "fabric";
+// import { fabric } from "fabric";
 import { WImageType } from "@/components/widgets/w-image/w-image-type";
 
 export const useCanvasStore = defineStore("canvasStore", {
@@ -34,7 +34,6 @@ export const useCanvasStore = defineStore("canvasStore", {
       );
     },
     selectedWidgetList() {
-      this.selectedWidgetIndex;
       const canvasListStore = useCanvasListStore();
       const currentCanvas = canvasListStore.currentCanvas;
       return currentCanvas.selectedWidgetUUIDList.map(

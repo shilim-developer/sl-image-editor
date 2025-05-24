@@ -1,10 +1,17 @@
 <template>
   <n-layout style="height: 360px">
-    <n-layout-header style="height: 64px; padding: 24px" bordered>
-      SL-IMAGE-EDITOR
-      <n-button @click="exportImg">导出</n-button>
+    <n-layout-header
+      class="h-50px ph-16px flex justify-between items-center"
+      bordered
+    >
+      <div class="flex items-center">
+        <span class="font-bold">SL-IMAGE-EDITOR</span>
+        <history-tool></history-tool>
+      </div>
+
+      <n-button type="primary" @click="exportImg">导出</n-button>
     </n-layout-header>
-    <n-layout position="absolute" style="top: 64px; bottom: 30px" has-sider>
+    <n-layout position="absolute" style="top: 50px; bottom: 30px" has-sider>
       <n-tabs
         type="bar"
         animated
@@ -47,32 +54,6 @@
           </div>
         </n-tab>
       </n-tabs>
-      <!-- <n-layout-sider
-        width="80px"
-        style="background: #fff; z-index: 2"
-        :content-style="{ background: '#fff', zIndex: 2 }"
-        :native-scrollbar="false"
-        bordered
-      >
-        <div class="flex flex-col justify-center items-center p-4 font-14">
-          <n-icon size="24">
-            <GridOutline />
-          </n-icon>
-          <n-text type="primary"> 模板 </n-text>
-        </div>
-        <div class="flex flex-col justify-center items-center p-4 font-14">
-          <n-icon size="30">
-            <SparklesOutline />
-          </n-icon>
-          <n-text type="primary"> 素材 </n-text>
-        </div>
-        <div class="flex flex-col justify-center items-center p-4 font-size-12">
-          <n-icon size="30">
-            <ImageSharp />
-          </n-icon>
-          <n-text type="primary">图片 </n-text>
-        </div>
-      </n-layout-sider> -->
       <n-layout-sider
         content-style="height:100%; padding: 16px;overflow:hidden"
         :collapsed-width="0"
@@ -85,35 +66,24 @@
           class="w-full h-full overflow-visible"
           style="height: 100%"
         />
-        <!-- <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2>
-        <n-h2>海淀桥</n-h2> -->
       </n-layout-sider>
       <n-layout-content
         ref="contentRef"
         :native-scrollbar="false"
         :scrollbar-props="{ xScrollable: false, scrollable: false }"
-        v-element-size="onContentResize"
       >
-        <widget-renderer
+        <design-canvas />
+        <!-- <widget-renderer
           ref="widgetRendererRef"
           :container-size="containerSize"
+          :container-position="containerPosition"
           :page-margin="{
             top: 40,
             right: 40,
             bottom: 40 + canvasListHeight,
             left: 40,
           }"
-        />
+        /> -->
       </n-layout-content>
       <div
         class="flex-shrink-0 w-270px h-full b-t-0 b-r-0 b-b-0 b-l-1px b-solid border-gray-200 flex flex-col overflow-hidden"
@@ -134,11 +104,11 @@
           ></component>
         </n-scrollbar>
       </div>
-      <canvas-list
+      <!-- <canvas-list
         :width="containerSize.width - 20 - 20"
         :left="containerLeft + 20"
         v-element-size="onCanvasListResize"
-      ></canvas-list>
+      ></canvas-list> -->
     </n-layout>
     <n-layout-footer
       position="absolute"
@@ -147,7 +117,6 @@
     >
       shilim@copyright
     </n-layout-footer>
-    <Moveable />
   </n-layout>
 </template>
 <script lang="ts" setup>
@@ -236,7 +205,7 @@ const data: [WPageType, ...CommonWidgetType[]] = [
       y: 0,
     },
   },
-  ...Array.from({ length: 500 }).map(() => ({
+  ...Array.from({ length: 1000 }).map(() => ({
     type: WidgetType.WImage,
     uuid: getUUID(),
     parent: "-1",
@@ -266,11 +235,17 @@ const containerSize = reactive({
   width: 0,
   height: 0,
 });
+const containerPosition = reactive({
+  left: 0,
+  right: 0,
+});
 const containerLeft = ref(0);
 function onContentResize() {
   containerSize.width = contentRef.value.$el.clientWidth;
   containerSize.height = contentRef.value.$el.clientHeight;
-  containerLeft.value = contentRef.value.$el.offsetLeft;
+  containerPosition.left = contentRef.value.$el.offsetLeft;
+  containerPosition.right =
+    window.innerWidth - containerPosition.left - containerSize.width;
 }
 
 const canvasListHeight = ref(0);
@@ -281,9 +256,9 @@ function onCanvasListResize({ height }: { height: number }) {
 const widgetRendererRef = ref<InstanceType<typeof WidgetRenderer>>();
 onMounted(() => {
   onContentResize();
-  canvasStore.setState({
-    widgetRendererRef: widgetRendererRef.value,
-  });
+  // canvasStore.setState({
+  //   widgetRendererRef: widgetRendererRef.value,
+  // });
 
   // getImageListApi();
 });
