@@ -1,34 +1,20 @@
-import {
-  blankCanvasInfo,
-  CanvasStoreInfo,
-} from "@/components/tools/canvas-list/canvas-type";
-import { CommonWidgetType } from "./../../components/widgets/types/common";
-import { WidgetType } from "@/components/widgets/types/common";
-import { WPageType } from "@/components/widgets/w-page/w-page-type";
 import { defineStore } from "pinia";
-import { cloneDeep } from "lodash";
+import { FabricEditor } from "@/components/layouts/design-canvas/fabric-editor";
+import { type Canvas } from "fabric";
 
 export interface DesignState {
-  canvasList: CanvasStoreInfo[];
-  selectedCanvasIndex: number;
+  fabircEditor: FabricEditor;
+  widgetRendererRef: InstanceType<typeof HTMLElement> | null;
 }
 
 export const useDesignStore = defineStore("design", {
   state: (): DesignState => ({
-    canvasList: [cloneDeep(blankCanvasInfo)],
-    selectedCanvasIndex: 0,
+    fabircEditor: markRaw(new FabricEditor()),
+    widgetRendererRef: null,
   }),
   getters: {
-    currentCanvas(state): CanvasStoreInfo {
-      return state.canvasList[state.selectedCanvasIndex];
-    },
-    pageWidget(): WPageType {
-      return this.currentCanvas.widgetList[0];
-    },
-    selectedWidgetIndex() {
-      return this.currentCanvas.selectedWidgets.map(
-        (item) => this.currentCanvas.widgetIndexMap[item]
-      );
+    currentCanvas(state): Canvas {
+      return state.fabircEditor.canvas as Canvas;
     },
   },
   actions: {
@@ -36,26 +22,9 @@ export const useDesignStore = defineStore("design", {
       if (typeof partial === "function") {
         this.$patch(partial);
       } else {
+        // @ts-ignore
         this.$patch(partial);
       }
-    },
-    // canvas相关
-    addCanvas() {
-      this.canvasList.push(cloneDeep(blankCanvasInfo));
-      this.selectedCanvasIndex = this.canvasList.length - 1;
-    },
-    selectCanvas(index: number) {
-      this.selectedCanvasIndex = index;
-    },
-    setWidgetList(data: [WPageType, ...CommonWidgetType[]]) {
-      this.currentCanvas.widgetList = reactive(data);
-    },
-    setWidgetData() {},
-    initWidgetIndexMap() {
-      this.currentCanvas.widgetIndexMap = {};
-      this.currentCanvas.widgetList.forEach((item, index) => {
-        this.currentCanvas.widgetIndexMap[item.uuid] = index;
-      });
     },
   },
 });

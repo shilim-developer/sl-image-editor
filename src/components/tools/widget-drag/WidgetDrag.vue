@@ -11,6 +11,9 @@ import {
   infixToPostfix,
 } from "@/utils/decimal";
 import { v4 as uuidV4 } from "uuid";
+import { widgetDragEmitter } from "./widget-drag-event";
+import { useDesignStore } from "@/stores/modules/design";
+import { Rect } from "fabric";
 
 const props = defineProps<{
   data: {
@@ -69,22 +72,22 @@ const handleMouseMove = (e: MouseEvent) => {
 };
 
 const canvasStore = useCanvasStore();
+const designStore = useDesignStore();
 const resizeStore = useResizeStore();
 const handleMouseUp = (e: MouseEvent) => {
-  canvasStore.canvasData.designName = "tets";
+  // canvasStore.canvasData.designName = "tets";
   window.removeEventListener("mousemove", handleMouseMove);
   window.removeEventListener("mouseup", handleMouseUp);
-  const renderContainer = canvasStore.widgetRendererRef.containerRef!;
-  const canvasContainer = canvasStore.widgetRendererRef.canvasRef!;
+  const renderContainer = designStore.widgetRendererRef!;
   const d_left = renderContainer.getBoundingClientRect().left;
   const d_top = renderContainer.getBoundingClientRect().top;
   const d_right = renderContainer.getBoundingClientRect().right;
   const d_bottom = renderContainer.getBoundingClientRect().bottom;
-  const half_canvas_width =
-    canvasStore.canvasData.widgetList[0].bounds.width / 2;
-  console.log("half_canvas_width:", canvasContainer);
-  const half_canvas_height =
-    canvasStore.canvasData.widgetList[0].bounds.height / 2;
+  const page = designStore.currentCanvas
+    .getObjects()
+    .find((item) => item.id === "page") as Rect;
+  const half_canvas_width = page.width / 2;
+  const half_canvas_height = page.height / 2;
   if (
     e.clientX < d_left ||
     e.clientY < d_top ||
@@ -98,29 +101,22 @@ const handleMouseUp = (e: MouseEvent) => {
       tempTarget.remove();
     }, 500);
   } else {
-    console.log(e.clientX, d_left, e.offsetX);
     let iWidth = Math.min(props.data.record.width, half_canvas_width);
     let iHeight = (iWidth * props.data.record.height) / props.data.record.width;
-    if (iHeight > half_canvas_height * 2) {
+    if (iHeight > half_canvas_height) {
       iHeight = half_canvas_height;
       iWidth = (iHeight * props.data.record.width) / props.data.record.height;
     }
-    const uuid = uuidV4();
-    canvasStore.addWidgetData({
-      uuid,
+    widgetDragEmitter.emit("ADD_IMAGE", {
       type: WidgetType.WImage,
       bounds: {
         width: parseInt(iWidth.toFixed(0)),
         height: parseInt(iHeight.toFixed(0)),
         x: decimalEvaluateToNumber(
-          `(${e.clientX} - ${canvasContainer.getBoundingClientRect().left} - ${e.offsetX}) / ${resizeStore.currentScale}`,
+          `(${e.clientX} - ${designStore.currentCanvas.viewportTransform[4]} - ${renderContainer.getBoundingClientRect().left} - ${e.offsetX}) / ${resizeStore.currentScale}`,
         ),
-        // (e.clientX -
-        //   canvasContainer.getBoundingClientRect().left -
-        //   e.offsetX) /
-        // resizeStore.currentScale,
         y: decimalEvaluateToNumber(
-          `(${e.clientY} - ${canvasContainer.getBoundingClientRect().top} - ${e.offsetY}) / ${resizeStore.currentScale}`,
+          `(${e.clientY} - ${designStore.currentCanvas.viewportTransform[5]} - ${renderContainer.getBoundingClientRect().top} - ${e.offsetY}) / ${resizeStore.currentScale}`,
         ),
       },
       transform: {
@@ -146,9 +142,83 @@ const handleMouseUp = (e: MouseEvent) => {
       opacity: 0,
       lock: false,
     });
-    canvasStore.selectWidget(uuid);
     tempTarget.remove();
   }
+  // const renderContainer = canvasStore.widgetRendererRef.containerRef!;
+  // const canvasContainer = canvasStore.widgetRendererRef.canvasRef!;
+  // const d_left = renderContainer.getBoundingClientRect().left;
+  // const d_top = renderContainer.getBoundingClientRect().top;
+  // const d_right = renderContainer.getBoundingClientRect().right;
+  // const d_bottom = renderContainer.getBoundingClientRect().bottom;
+  // const half_canvas_width =
+  //   canvasStore.canvasData.widgetList[0].bounds.width / 2;
+  // console.log("half_canvas_width:", canvasContainer);
+  // const half_canvas_height =
+  //   canvasStore.canvasData.widgetList[0].bounds.height / 2;
+  // if (
+  //   e.clientX < d_left ||
+  //   e.clientY < d_top ||
+  //   e.clientX > d_right ||
+  //   e.clientY > d_bottom
+  // ) {
+  //   // 不在范围内
+  //   tempTarget.style.transition = "transform 0.5s ease";
+  //   tempTarget.style.transform = "translate(0px, 0px)";
+  //   setTimeout(() => {
+  //     tempTarget.remove();
+  //   }, 500);
+  // } else {
+  //   console.log(e.clientX, d_left, e.offsetX);
+  //   let iWidth = Math.min(props.data.record.width, half_canvas_width);
+  //   let iHeight = (iWidth * props.data.record.height) / props.data.record.width;
+  //   if (iHeight > half_canvas_height * 2) {
+  //     iHeight = half_canvas_height;
+  //     iWidth = (iHeight * props.data.record.width) / props.data.record.height;
+  //   }
+  //   const uuid = uuidV4();
+  //   canvasStore.addWidgetData({
+  //     uuid,
+  //     type: WidgetType.WImage,
+  //     bounds: {
+  //       width: parseInt(iWidth.toFixed(0)),
+  //       height: parseInt(iHeight.toFixed(0)),
+  //       x: decimalEvaluateToNumber(
+  //         `(${e.clientX} - ${canvasContainer.getBoundingClientRect().left} - ${e.offsetX}) / ${resizeStore.currentScale}`,
+  //       ),
+  //       // (e.clientX -
+  //       //   canvasContainer.getBoundingClientRect().left -
+  //       //   e.offsetX) /
+  //       // resizeStore.currentScale,
+  //       y: decimalEvaluateToNumber(
+  //         `(${e.clientY} - ${canvasContainer.getBoundingClientRect().top} - ${e.offsetY}) / ${resizeStore.currentScale}`,
+  //       ),
+  //     },
+  //     transform: {
+  //       rotate: 0,
+  //       scale: 1,
+  //       flipX: 1,
+  //       flipY: 1,
+  //     },
+  //     url: props.data.record.url,
+  //     origin: {
+  //       width: props.data.record.width,
+  //       height: props.data.record.height,
+  //       x: 0,
+  //       y: 0,
+  //     },
+  //     cropBounds: {
+  //       x: 0,
+  //       y: 0,
+  //       width: 0,
+  //       height: 0,
+  //     },
+  //     parent: "-1",
+  //     opacity: 0,
+  //     lock: false,
+  //   });
+  //   canvasStore.selectWidget(uuid);
+  //   tempTarget.remove();
+  // }
 };
 </script>
 <style lang="scss" scoped></style>
